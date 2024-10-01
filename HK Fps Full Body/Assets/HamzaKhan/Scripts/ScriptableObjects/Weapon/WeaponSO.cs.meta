@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 605f031169e61448a8e7eba60e243620
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - weaponIconSprite: {instanceID: 0}
+  - crossHairSprite: {instanceID: 0}
+  - projectilePrefab: {instanceID: 0}
+  - weaponShellEjectEffectPrefab: {fileID: 1000013947318026, guid: 7ca96822084510147adb2aea03d45e3b,
+      type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

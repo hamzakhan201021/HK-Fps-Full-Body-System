@@ -1,0 +1,54 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 605f031169e61448a8e7eba60e243620, type: 3}
+  m_Name: AR18WeaponSO
+  m_EditorClassIdentifier: 
+  WeaponName: AR18
+  WeaponIconSprite: {fileID: 21300046, guid: 9d94458151b834e41a7c4e9e4825cd23, type: 3}
+  CrossHairSprite: {fileID: 21300000, guid: 9e6fdb7bfc45d4d48ad99eedc050a082, type: 3}
+  WeaponIconImageHeight: 50
+  WeaponIconImageWidth: 150
+  TimeBetweenShot: 0.08
+  ReloadingAnimationTime: 2
+  MaxBulletSpreadAngle: 5
+  ShotBumpRotationAmount: 2
+  MagazineSize: 30
+  WeaponType: 0
+  FiringType: 0
+  MaxShootRange: 460
+  ProjectileForce: 0
+  RigidbodyForceMode: 0
+  ProjectilePrefab: {fileID: 0}
+  EjectShellOnShoot: 1
+  EnableHeatingSystem: 1
+  ExtraHeatIncreasePerShot: 1.25
+  ConstantHeatCooldownRatePerSecond: 2
+  ExtraHeatCoolingThreshold: 25
+  ExtraOverheatThreshold: 40
+  ClipProjectorPosition: {x: 0.188, y: 0.15, z: 0.49}
+  NewPosition: {x: 0, y: 0.06, z: 0.19}
+  NewRotation: {x: 90, y: -90, z: -26.88}
+  BoxCastSize: {x: 0.08, y: 0.3, z: 0.92}
+  BoxCastClippedSize: {x: 0.1, y: 0.32, z: 0.94}
+  CameraNormalPosition: {x: 0.1, y: 0.29, z: 0.14}
+  CameraAimingPosition: {x: 0.189, y: 0.29, z: 0.18}
+  CameraClippedPosition: {x: 0.189, y: 0.29, z: 0.18}
+  RecoilX: -14
+  RecoilY: 1.3
+  RecoilZ: 1.3
+  Snappiness: 17
+  ReturnSpeed: 23
+  CinemachineRecoilImpulse: {x: 0.004, y: 0.004, z: 0.04}
+  SwayAmount: 1.5
+  SwaySmooth: 5
+  WeaponPositionOffset: {x: 0, y: 0, z: 0}
+  SpineConstraintOffsetY: 50

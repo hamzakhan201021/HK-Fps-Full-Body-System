@@ -1,0 +1,56 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 605f031169e61448a8e7eba60e243620, type: 3}
+  m_Name: AWMWeaponSO
+  m_EditorClassIdentifier: 
+  WeaponName: AWM
+  WeaponIconSprite: {fileID: 21300034, guid: b159378de70814b37b4a5e7521476dc8, type: 3}
+  CrossHairSprite: {fileID: 21300000, guid: 5d0717f5d784c704ea00bf8e7caa526a, type: 3}
+  WeaponIconImageHeight: 55
+  WeaponIconImageWidth: 200
+  WeaponUIPositionOffset: {x: 0, y: 0, z: 0}
+  WeaponUIRotationOffset: {x: 0, y: 0, z: 0}
+  TimeBetweenShot: 1.833
+  ReloadingAnimationTime: 4.9
+  MaxBulletSpreadAngle: 0
+  ShotBumpRotationAmount: 2
+  MagazineSize: 5
+  WeaponType: 0
+  FiringType: 0
+  MaxShootRange: 1000
+  ProjectileForce: 0
+  RigidbodyForceMode: 0
+  ProjectilePrefab: {fileID: 0}
+  EjectShellOnShoot: 0
+  EnableHeatingSystem: 1
+  ExtraHeatIncreasePerShot: 10
+  ConstantHeatCooldownRatePerSecond: 2
+  ExtraHeatCoolingThreshold: 25
+  ExtraOverheatThreshold: 40
+  ClipProjectorPosition: {x: 0.108, y: 0.23, z: 0.67}
+  NewPosition: {x: 0.18, y: -0.12, z: 0.2}
+  NewRotation: {x: 85, y: -41.79, z: -26.88}
+  BoxCastSize: {x: 0.07, y: 0.16, z: 1.4}
+  BoxCastClippedSize: {x: 0.07, y: 0.2, z: 1.55}
+  CameraNormalPosition: {x: 0, y: 0.3, z: 0.12}
+  CameraAimingPosition: {x: 0, y: 0.3, z: 0.12}
+  CameraClippedPosition: {x: 0.11, y: 0.3, z: 0.12}
+  RecoilX: -60
+  RecoilY: 2.5
+  RecoilZ: 3.5
+  Snappiness: 70
+  ReturnSpeed: 22
+  CinemachineRecoilImpulse: {x: 0.005, y: 0.005, z: 0.04}
+  SwayAmount: 0.3
+  SwaySmooth: 5
+  WeaponPositionOffset: {x: -0.08, y: 0, z: 0}
+  SpineConstraintOffsetY: 50

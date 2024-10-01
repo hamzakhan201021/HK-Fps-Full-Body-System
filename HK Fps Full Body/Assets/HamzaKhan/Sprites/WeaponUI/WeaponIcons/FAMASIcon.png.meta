@@ -1,0 +1,270 @@
+fileFormatVersion: 2
+guid: e677b7db9cd364863b292b43a7d9a684
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 21300000
+    second: DT Automatic rifle 6
+  - first:
+      213: 21300002
+    second: DT Automatic rifle 1
+  - first:
+      213: 21300004
+    second: DT Handgun 5
+  - first:
+      213: 21300006
+    second: DT Automatic rifle 5
+  - first:
+      213: 21300008
+    second: DT Semiautomatic rifle 1
+  - first:
+      213: 21300010
+    second: DT Handgun 4
+  - first:
+      213: 21300012
+    second: DT Shotgun 2
+  - first:
+      213: 21300014
+    second: DT Handgun 3
+  - first:
+      213: 21300016
+    second: DT Submachinegun 3
+  - first:
+      213: 21300018
+    second: DT Automatic rifle 2
+  - first:
+      213: 21300020
+    second: DT Sniper 3
+  - first:
+      213: 21300022
+    second: DT Handgun 2
+  - first:
+      213: 21300024
+    second: DT Submachinegun 1
+  - first:
+      213: 21300026
+    second: DT Shotgun 1
+  - first:
+      213: 21300028
+    second: DT Handgun 1
+  - first:
+      213: 21300030
+    second: DT Rifle 1
+  - first:
+      213: 21300032
+    second: DT Rocketlauncher 1
+  - first:
+      213: 21300034
+    second: DT Sniper 2
+  - first:
+      213: 21300036
+    second: DT Sniper 1
+  - first:
+      213: 21300038
+    second: DT Combat knife
+  - first:
+      213: 21300040
+    second: DT Automatic shotgun 1
+  - first:
+      213: 21300042
+    second: DT Submachinegun 2
+  - first:
+      213: 21300044
+    second: DT Automatic rifle 3
+  - first:
+      213: 21300046
+    second: DT Automatic rifle 4
+  externalObjects: {}
+  serializedVersion: 12
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: -1
+  maxTextureSize: 1024
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 1
+  swizzle: 50462976
+  cookieLightType: 1
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Web
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Server
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Android
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: FAMASIcon
+      rect:
+        serializedVersion: 2
+        x: 775
+        y: 2491
+        width: 854
+        height: 344
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 23305410000000000800000000000000
+      internalID: 21300018
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 22bb847b8504045c6ae7844e892d3dd5
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    nameFileIdTable:
+      DT Automatic rifle 1: 21300002
+      DT Automatic rifle 3: 21300044
+      DT Automatic rifle 4: 21300046
+      DT Automatic rifle 5: 21300006
+      DT Automatic rifle 6: 21300000
+      DT Automatic shotgun 1: 21300040
+      DT Combat knife: 21300038
+      DT Handgun 1: 21300028
+      DT Handgun 2: 21300022
+      DT Handgun 3: 21300014
+      DT Handgun 4: 21300010
+      DT Handgun 5: 21300004
+      DT Rifle 1: 21300030
+      DT Rocketlauncher 1: 21300032
+      DT Semiautomatic rifle 1: 21300008
+      DT Shotgun 1: 21300026
+      DT Shotgun 2: 21300012
+      DT Sniper 1: 21300036
+      DT Sniper 2: 21300034
+      DT Sniper 3: 21300020
+      DT Submachinegun 1: 21300024
+      DT Submachinegun 2: 21300042
+      DT Submachinegun 3: 21300016
+      FAMASIcon: 21300018
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

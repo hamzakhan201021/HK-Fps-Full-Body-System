@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 963c115c546904a1cb9fffb1ecdc2db0
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - weapon: {instanceID: 0}
+  - renderCamera: {instanceID: 0}
+  - aimingVirtualCamera: {instanceID: 0}
+  - scopeRenderer: {instanceID: 0}
+  - materialToCopy: {fileID: 2100000, guid: 79fd18ac7acfb4a4c9698baa63f7197b, type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

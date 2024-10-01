@@ -1,0 +1,54 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 605f031169e61448a8e7eba60e243620, type: 3}
+  m_Name: SteyrAUGWeaponSO
+  m_EditorClassIdentifier: 
+  WeaponName: SteyrAUG
+  WeaponIconSprite: {fileID: 21300000, guid: 7ec1e3d69b59c478f9c8b00b45b1251a, type: 3}
+  CrossHairSprite: {fileID: 21300000, guid: 666f45a1953efde4aacb8867e4d0d8f5, type: 3}
+  WeaponIconImageHeight: 50
+  WeaponIconImageWidth: 115
+  TimeBetweenShot: 0.083
+  ReloadingAnimationTime: 2.6
+  MaxBulletSpreadAngle: 5
+  ShotBumpRotationAmount: 2
+  MagazineSize: 42
+  WeaponType: 0
+  FiringType: 0
+  MaxShootRange: 600
+  ProjectileForce: 0
+  RigidbodyForceMode: 0
+  ProjectilePrefab: {fileID: 0}
+  EjectShellOnShoot: 1
+  EnableHeatingSystem: 1
+  ExtraHeatIncreasePerShot: 1.25
+  ConstantHeatCooldownRatePerSecond: 2
+  ExtraHeatCoolingThreshold: 25
+  ExtraOverheatThreshold: 40
+  ClipProjectorPosition: {x: 0.19, y: 0.13, z: 0.42}
+  NewPosition: {x: 0, y: 0.06, z: 0.19}
+  NewRotation: {x: 90, y: -90, z: -26.88}
+  BoxCastSize: {x: 0.08, y: 0.33, z: 0.85}
+  BoxCastClippedSize: {x: 0.1, y: 0.35, z: 0.87}
+  CameraNormalPosition: {x: 0.09, y: 0.29, z: 0.11}
+  CameraAimingPosition: {x: 0.09, y: 0.29, z: 0.11}
+  CameraClippedPosition: {x: 0.19, y: 0.2, z: -0.37}
+  RecoilX: -8
+  RecoilY: 0.6
+  RecoilZ: 0.6
+  Snappiness: 14
+  ReturnSpeed: 23
+  CinemachineRecoilImpulse: {x: 0.0035, y: 0.0035, z: 0.025}
+  SwayAmount: 1.5
+  SwaySmooth: 5
+  WeaponPositionOffset: {x: 0, y: 0, z: 0}
+  SpineConstraintOffsetY: 50
