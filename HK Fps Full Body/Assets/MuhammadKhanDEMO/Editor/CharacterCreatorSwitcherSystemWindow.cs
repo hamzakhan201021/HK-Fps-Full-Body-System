@@ -53,6 +53,9 @@ public class CharacterCreatorSwitcherSystemWindow : EditorWindow
     private string rigLayersRigPropertyName = "m_Rig";
     private string rigLayersActivePropertyName = "m_Active";
 
+    private string _playerUIPropertyName = "_playerUI";
+    private string _iKConstraintsPropertyName = "_iKConstraints";
+
     private void SetupCharacter()
     {
         if (playerModel == null)
@@ -85,11 +88,20 @@ public class CharacterCreatorSwitcherSystemWindow : EditorWindow
 
         rig.AddComponent<Rig>();
 
-        SerializedObject rigWeightSetterSObj = new SerializedObject(rig.AddComponent<RigWeightSetter>());
-        SerializedProperty rigProperty = rigWeightSetterSObj.FindProperty(rigWeightSetterRigPropertyName);
-        rigProperty.objectReferenceValue = rig.GetComponent<Rig>();
-        rigWeightSetterSObj.ApplyModifiedProperties();
+        //SerializedObject playerControllerSObj = new SerializedObject(playerParentGameObject.GetComponent<PlayerController>());
+        //SerializedProperty playerUIProperty = playerControllerSObj.FindProperty(_playerUIPropertyName);
+        //playerUIProperty.objectReferenceValue = playerParentGameObject.GetComponent<PlayerUI>();
+        //playerControllerSObj.ApplyModifiedProperties();
 
+        //SerializedObject rigWeightSetterSObj = new SerializedObject(rig.AddComponent<RigWeightSetter>());
+        //SerializedProperty rigProperty = rigWeightSetterSObj.FindProperty(rigWeightSetterRigPropertyName);
+        //rigProperty.objectReferenceValue = rig.GetComponent<Rig>();
+        //rigWeightSetterSObj.ApplyModifiedProperties();
+
+        AssignPrivatePropertyObj(playerParentGameObject.GetComponent<PlayerController>(), playerParentGameObject.GetComponent<PlayerUI>(), _playerUIPropertyName);
+        AssignPrivatePropertyObj(rig.AddComponent<RigWeightSetter>(), rig.GetComponent<Rig>(), rigWeightSetterRigPropertyName);
+
+        // /// /// //
         SerializedObject rigBuilderSObj = new SerializedObject(playerModel.GetComponent<RigBuilder>());
         SerializedProperty rigLayersProperty = rigBuilderSObj.FindProperty(rigLayersPropertyName);
 
@@ -336,6 +348,28 @@ public class CharacterCreatorSwitcherSystemWindow : EditorWindow
         spine2Constraint.data.offset = new Vector3(0, 50, 0);
         #endregion
 
+        #region Constraints Weight Modifier
+        // /// /// //
+        SerializedObject iKBasedFingersWeightModifierSObj = new SerializedObject(iKBasedFingersWeightModifier);
+        SerializedProperty constraintsWeightModifierProperty = iKBasedFingersWeightModifierSObj.FindProperty(_iKConstraintsPropertyName);
 
+        constraintsWeightModifierProperty.arraySize++;
+        SerializedProperty newElementProperty = constraintsWeightModifierProperty.GetArrayElementAtIndex(constraintsWeightModifierProperty.arraySize - 1);
+
+        newElementProperty.objectReferenceValue = leftHandIK;
+
+        iKBasedFingersWeightModifierSObj.ApplyModifiedProperties();
+        #endregion
+
+        #region Hand Constraints
+        #endregion
+    }
+
+    void AssignPrivatePropertyObj(Component component, UnityEngine.Object objReference, string propertyName)
+    {
+        SerializedObject serializedObject = new SerializedObject(component);
+        SerializedProperty rigProperty = serializedObject.FindProperty(propertyName);
+        rigProperty.objectReferenceValue = objReference;
+        serializedObject.ApplyModifiedProperties();
     }
 }
