@@ -1,8 +1,7 @@
 using UnityEngine;
 using UnityEditor;
 using UnityEngine.Animations.Rigging;
-using System;
-using UnityEngine.UI;
+using UnityEngine.ProBuilder.Shapes;
 
 public class CharacterCreatorSwitcherSystemWindow : EditorWindow
 {
@@ -43,18 +42,30 @@ public class CharacterCreatorSwitcherSystemWindow : EditorWindow
             SetupCharacter();
         }
 
+        
+
         /* (MUHAMMAD NOTE) Use your brain, whatever you want to do will almost always 
          * be in the GUILayout.WHATEVER(); 
          * or EditorGUILayout 
          * or EditorGUI*/
     }
+
+
     private string rigWeightSetterRigPropertyName = "rig";
     private string rigLayersPropertyName = "m_RigLayers";
     private string rigLayersRigPropertyName = "m_Rig";
     private string rigLayersActivePropertyName = "m_Active";
+    private string _iKConstraintsPropertyName = "_iKConstraints";
 
     private string _playerUIPropertyName = "_playerUI";
-    private string _iKConstraintsPropertyName = "_iKConstraints";
+    private string _playerAnimatorName = "_playerAnimator";
+    private string _gunHolderAnimatorName = "_gunHolderAnimator";
+    private string _centerSpinePosName = "_centerSpinePos";
+    private string _cameraHolderName = "_cameraHolder";
+    private string _headTransformName = "_headTransform";
+    private string _gunHolderName = "_gunHolder";
+    private string _iKBasedFingersWeightModifierName = "_iKBasedFingersWeightModifier";
+    private string _rotationConstraitBasedFingersWeightModifierName = "_rotationConstraitBasedFingersWeightModifier";
 
     private void SetupCharacter()
     {
@@ -98,8 +109,7 @@ public class CharacterCreatorSwitcherSystemWindow : EditorWindow
         //rigProperty.objectReferenceValue = rig.GetComponent<Rig>();
         //rigWeightSetterSObj.ApplyModifiedProperties();
 
-        AssignPrivatePropertyObj(playerParentGameObject.GetComponent<PlayerController>(), playerParentGameObject.GetComponent<PlayerUI>(), _playerUIPropertyName);
-        AssignPrivatePropertyObj(rig.AddComponent<RigWeightSetter>(), rig.GetComponent<Rig>(), rigWeightSetterRigPropertyName);
+       
 
         // /// /// //
         SerializedObject rigBuilderSObj = new SerializedObject(playerModel.GetComponent<RigBuilder>());
@@ -112,6 +122,7 @@ public class CharacterCreatorSwitcherSystemWindow : EditorWindow
         newElement.FindPropertyRelative(rigLayersActivePropertyName).boolValue = true;
 
         rigBuilderSObj.ApplyModifiedProperties();
+
 
         #endregion
 
@@ -192,6 +203,106 @@ public class CharacterCreatorSwitcherSystemWindow : EditorWindow
         GameObject rightHandPinkyIK = new GameObject("RightHandPinkyIK");
         GameObject rightHandRingIK = new GameObject("RightHandRingIK");
         GameObject rightHandThumbIK = new GameObject("RightHandThumbIK");
+
+
+        //
+
+        GameObject leftHandConstraintIndex1Target = new GameObject("LeftHandIndex1ConstraintTarget");
+        GameObject leftHandConstraintIndex2Target = new GameObject("LeftHandIndex2ConstraintTarget");
+        GameObject leftHandConstraintIndex3Target = new GameObject("LeftHandIndex3ConstraintTarget");
+
+        GameObject leftHandConstraintMiddle1Target = new GameObject("LeftHandMiddle1ConstraintTarget");
+        GameObject leftHandConstraintMiddle2Target = new GameObject("LeftHandMiddle2ConstraintTarget");
+        GameObject leftHandConstraintMiddle3Target = new GameObject("LeftHandMiddle3ConstraintTarget");
+
+        GameObject leftHandConstraintPinky1Target = new GameObject("LeftHandPinky1ConstraintTarget");
+        GameObject leftHandConstraintPinky2Target = new GameObject("LeftHandPinky2ConstraintTarget");
+        GameObject leftHandConstraintPinky3Target = new GameObject("LeftHandPinky3ConstraintTarget");
+
+        GameObject leftHandConstraintRing1Target = new GameObject("LeftHandRing1ConstraintTarget");
+        GameObject leftHandConstraintRing2Target = new GameObject("LeftHandRing2ConstraintTarget");
+        GameObject leftHandConstraintRing3Target = new GameObject("LeftHandRing3ConstraintTarget");
+
+        GameObject leftHandConstraintThumb1Target = new GameObject("LeftHandThumb1ConstraintTarget");
+        GameObject leftHandConstraintThumb2Target = new GameObject("LeftHandThumb2ConstraintTarget");
+        GameObject leftHandConstraintThumb3Target = new GameObject("LeftHandThumb3ConstraintTarget");
+
+
+        GameObject leftHandIndexIKTarget = new GameObject("LeftHandIndexIKTarget");
+        GameObject leftHandMiddleIKTarget = new GameObject("LeftHandMiddleIKTarget");
+        GameObject leftHandPinkyIKTarget = new GameObject("LeftHandPinkyIKTarget");
+        GameObject leftHandRingIKTarget = new GameObject("LeftHandRingIKTarget");
+        GameObject leftHandThumbIKTarget = new GameObject("LeftHandThumbIKTarget");
+
+
+
+        GameObject rightHandConstraintIndex1Target = new GameObject("RightHandIndex1ConstraintTarget");
+        GameObject rightHandConstraintIndex2Target = new GameObject("RightHandIndex2ConstraintTarget");
+        GameObject rightHandConstraintIndex3Target = new GameObject("RightHandIndex3ConstraintTarget");
+
+        GameObject rightHandConstraintMiddle1Target = new GameObject("RightHandMiddle1ConstraintTarget");
+        GameObject rightHandConstraintMiddle2Target = new GameObject("RightHandMiddle2ConstraintTarget");
+        GameObject rightHandConstraintMiddle3Target = new GameObject("RightHandMiddle3ConstraintTarget");
+
+        GameObject rightHandConstraintPinky1Target = new GameObject("RightHandPinky1ConstraintTarget");
+        GameObject rightHandConstraintPinky2Target = new GameObject("RightHandPinky2ConstraintTarget");
+        GameObject rightHandConstraintPinky3Target = new GameObject("RightHandPinky3ConstraintTarget");
+
+        GameObject rightHandConstraintRing1Target = new GameObject("RightHandRing1ConstraintTarget");
+        GameObject rightHandConstraintRing2Target = new GameObject("RightHandRing2ConstraintTarget");
+        GameObject rightHandConstraintRing3Target = new GameObject("RightHandRing3ConstraintTarget");
+
+        GameObject rightHandConstraintThumb1Target = new GameObject("RightHandThumb1ConstraintTarget");
+        GameObject rightHandConstraintThumb2Target = new GameObject("RightHandThumb2ConstraintTarget");
+        GameObject rightHandConstraintThumb3Target = new GameObject("RightHandThumb3ConstraintTarget");
+
+
+        GameObject rightHandIndexIKTarget = new GameObject("RightHandIndexIKTarget");
+        GameObject rightHandMiddleIKTarget = new GameObject("RightHandMiddleIKTarget");
+        GameObject rightHandPinkyIKTarget = new GameObject("RightHandPinkyIKTarget");
+        GameObject rightHandRingIKTarget = new GameObject("RightHandRingIKTarget");
+        GameObject rightHandThumbIKTarget = new GameObject("RightHandThumbIKTarget");
+
+
+        GameObject iKBasedFingersTargetL = new GameObject("IKBasedFingersTarget");
+        GameObject directRotationMatchFingersTargetL = new GameObject("DirectRotationMatchFingers");
+
+        GameObject iKBasedFingersTargetR = new GameObject("IKBasedFingersTarget");
+        GameObject directRotationMatchFingersTargetR = new GameObject("directRotationMatchFingers");
+
+
+        GameObject leftHandIKTarget = new GameObject("LeftHandIKTarget");
+        GameObject rightHandIKTarget = new GameObject("RightHandIKTarget");
+
+        // Spine Follower
+        GameObject spineFollower = new GameObject("SpineFollower");
+
+        GameObject centerSpinePos = new GameObject("CenterSpinePos");
+        GameObject clipProjectorPos = new GameObject("ClipProjectorPos");
+
+        GameObject gunHolderAnimated = new GameObject("GunHolderAnimated");
+        GameObject cameraHolder = new GameObject("CameraHolder");
+        GameObject gunHolder = new GameObject("GunHolder");
+
+        GameObject clipProjector = new GameObject("ClipProjector");
+        GameObject interactPointer = new GameObject("InteractPointer");
+        GameObject visual = GameObject.CreatePrimitive(PrimitiveType.Cube);
+
+        // Slots/Sockets
+        GameObject slotsSockets = new GameObject("Slots/Sockets");
+
+        GameObject rightHandSlot = new GameObject("RightHandSlot");
+        GameObject playerBackSlots = new GameObject("PlayerBackSlot");
+        GameObject rightUpLegSlot = new GameObject("RightUpLegSlot");
+
+        GameObject rifleSlotOne = new GameObject("RifleSlotOne");
+        GameObject rifleSlotTwo = new GameObject("RifleSlotTwo");
+
+        GameObject pistolSlot = new GameObject("PistolSlot");
+
+        GameObject knifeSlotPosition = new GameObject("KnifeSlotPosition");
+        GameObject knifeSlot = new GameObject("KnifeSlot");
+
         #endregion
 
         #region Parenting
@@ -269,6 +380,109 @@ public class CharacterCreatorSwitcherSystemWindow : EditorWindow
         rightHandThumb3Constraint.transform.SetParent(rightHandThumb2Constraint.transform);
 
 
+
+        // Right hand and Left hand IK parenting
+
+        // Left hand
+        iKBasedFingersTargetL.transform.SetParent(leftHandIKTarget.transform);
+        directRotationMatchFingersTargetL.transform.SetParent(leftHandIKTarget.transform);
+
+        leftHandIndexIKTarget.transform.SetParent(iKBasedFingersTargetL.transform);
+        leftHandMiddleIKTarget.transform.SetParent(iKBasedFingersTargetL.transform);
+        leftHandPinkyIKTarget.transform.SetParent(iKBasedFingersTargetL.transform);
+        leftHandRingIKTarget.transform.SetParent(iKBasedFingersTargetL.transform);
+        leftHandThumbIKTarget.transform.SetParent(iKBasedFingersTargetL.transform);
+
+        leftHandConstraintIndex1Target.transform.SetParent(directRotationMatchFingersTargetL.transform);
+        leftHandConstraintIndex2Target.transform.SetParent(leftHandConstraintIndex1Target.transform);
+        leftHandConstraintIndex3Target.transform.SetParent(leftHandConstraintIndex2Target.transform);
+
+
+        leftHandConstraintMiddle1Target.transform.SetParent(directRotationMatchFingersTargetL.transform);
+        leftHandConstraintMiddle2Target.transform.SetParent(leftHandConstraintMiddle1Target.transform);
+        leftHandConstraintMiddle3Target.transform.SetParent(leftHandConstraintMiddle2Target.transform);
+
+
+        leftHandConstraintPinky1Target.transform.SetParent(directRotationMatchFingersTargetL.transform);
+        leftHandConstraintPinky2Target.transform.SetParent(leftHandConstraintPinky1Target.transform);
+        leftHandConstraintPinky3Target.transform.SetParent(leftHandConstraintPinky2Target.transform);
+
+        leftHandConstraintRing1Target.transform.SetParent(directRotationMatchFingersTargetL.transform);
+        leftHandConstraintRing2Target.transform.SetParent(leftHandConstraintRing1Target.transform);
+        leftHandConstraintRing3Target.transform.SetParent(leftHandConstraintRing2Target.transform);
+
+        leftHandConstraintThumb1Target.transform.SetParent(directRotationMatchFingersTargetL.transform);
+        leftHandConstraintThumb2Target.transform.SetParent(leftHandConstraintThumb1Target.transform);
+        leftHandConstraintThumb3Target.transform.SetParent(leftHandConstraintThumb2Target.transform);
+     
+
+        
+        // Right
+        iKBasedFingersTargetR.transform.SetParent(rightHandIKTarget.transform);
+        directRotationMatchFingersTargetR.transform.SetParent(rightHandIKTarget.transform);
+
+        rightHandIndexIKTarget.transform.SetParent(iKBasedFingersTargetR.transform);
+        rightHandMiddleIKTarget.transform.SetParent(iKBasedFingersTargetR.transform);
+        rightHandPinkyIKTarget.transform.SetParent(iKBasedFingersTargetR.transform);
+        rightHandRingIKTarget.transform.SetParent(iKBasedFingersTargetR.transform);
+        rightHandThumbIKTarget.transform.SetParent(iKBasedFingersTargetR.transform);
+
+        rightHandConstraintIndex1Target.transform.SetParent(directRotationMatchFingersTargetR.transform);
+        rightHandConstraintIndex2Target.transform.SetParent(rightHandConstraintIndex1Target.transform);
+        rightHandConstraintIndex3Target.transform.SetParent(rightHandConstraintIndex2Target.transform);
+
+        rightHandConstraintMiddle1Target.transform.SetParent(directRotationMatchFingersTargetR.transform);
+        rightHandConstraintMiddle2Target.transform.SetParent(rightHandConstraintMiddle1Target.transform);
+        rightHandConstraintMiddle3Target.transform.SetParent(rightHandConstraintMiddle2Target.transform);
+
+        rightHandConstraintPinky1Target.transform.SetParent(directRotationMatchFingersTargetR.transform);
+        rightHandConstraintPinky2Target.transform.SetParent(rightHandConstraintPinky1Target.transform);
+        rightHandConstraintPinky3Target.transform.SetParent(rightHandConstraintPinky2Target.transform);
+
+        rightHandConstraintRing1Target.transform.SetParent(directRotationMatchFingersTargetR.transform);
+        rightHandConstraintRing2Target.transform.SetParent(rightHandConstraintRing1Target.transform);
+        rightHandConstraintRing3Target.transform.SetParent(rightHandConstraintRing2Target.transform);
+
+        rightHandConstraintThumb1Target.transform.SetParent(directRotationMatchFingersTargetR.transform);
+        rightHandConstraintThumb2Target.transform.SetParent(rightHandConstraintThumb1Target.transform);
+        rightHandConstraintThumb3Target.transform.SetParent(rightHandConstraintThumb2Target.transform);
+
+        // IK targets
+        leftHandIKTarget.transform.SetParent(spineFollower.transform);
+        rightHandIKTarget.transform.SetParent(spineFollower.transform);
+
+        // Spine Follower 
+        spineFollower.transform.SetParent(playerParentGameObject.transform);
+
+        centerSpinePos.transform.SetParent(spineFollower.transform);
+        clipProjectorPos.transform.SetParent(spineFollower.transform);
+
+        gunHolderAnimated.transform.SetParent(centerSpinePos.transform);
+        cameraHolder.transform.SetParent(centerSpinePos.transform);
+
+        gunHolder.transform.SetParent(gunHolderAnimated.transform);
+
+        clipProjector.transform.SetParent(clipProjectorPos.transform);
+        interactPointer.transform.SetParent(clipProjectorPos.transform);
+
+        visual.transform.SetParent(clipProjector.transform);
+        visual.SetActive(false);
+
+        // Slots/Sockets
+        slotsSockets.transform.SetParent(playerParentGameObject.transform);
+
+        rightHandSlot.transform.SetParent(slotsSockets.transform);
+        playerBackSlots.transform.SetParent(slotsSockets.transform);
+        rightUpLegSlot.transform.SetParent(slotsSockets.transform);
+
+        rifleSlotOne.transform.SetParent(playerBackSlots.transform);
+        rifleSlotTwo.transform.SetParent(playerBackSlots.transform);
+
+        pistolSlot.transform.SetParent(rightUpLegSlot.transform);
+        knifeSlotPosition.transform.SetParent(rightUpLegSlot.transform);
+
+        knifeSlot.transform.SetParent(knifeSlotPosition.transform);
+
         #endregion
 
         #region Add Components
@@ -324,6 +538,103 @@ public class CharacterCreatorSwitcherSystemWindow : EditorWindow
         MatchRotationToTarget rightHandThumb2Target = rightHandThumb2Constraint.AddComponent<MatchRotationToTarget>();
         MatchRotationToTarget rightHandThumb3Target = rightHandThumb3Constraint.AddComponent<MatchRotationToTarget>();
 
+        TwoBoneIKConstraint leftHandBoneIK = leftHandIK.AddComponent<TwoBoneIKConstraint>();
+        TwoBoneIKConstraint rightHandBoneIK = rightHandIK.AddComponent<TwoBoneIKConstraint>();
+
+
+        // Left hand IK
+        TwoBoneIKConstraint leftHandIndexIKConstraint = leftHandIndexIK.AddComponent<TwoBoneIKConstraint>();
+        TwoBoneIKConstraint leftHandMiddleIKConstraint = leftHandMiddleIK.AddComponent<TwoBoneIKConstraint>();
+        TwoBoneIKConstraint leftHandPinkyIKConstraint = leftHandPinkyIK.AddComponent<TwoBoneIKConstraint>();
+        TwoBoneIKConstraint leftHandRingIKConstraint = leftHandRingIK.AddComponent<TwoBoneIKConstraint>();
+        TwoBoneIKConstraint leftHandThumbIKConstraint = leftHandThumbIK.AddComponent<TwoBoneIKConstraint>();
+
+        // Right hand IK
+        TwoBoneIKConstraint rightHandIndexIKConstraint = rightHandIndexIK.AddComponent<TwoBoneIKConstraint>();
+        TwoBoneIKConstraint rightHandMiddleIKConstraint = rightHandMiddleIK.AddComponent<TwoBoneIKConstraint>();
+        TwoBoneIKConstraint rightHandPinkyIKConstraint = rightHandPinkyIK.AddComponent<TwoBoneIKConstraint>();
+        TwoBoneIKConstraint rightHandRingIKConstraint = rightHandRingIK.AddComponent<TwoBoneIKConstraint>();
+        TwoBoneIKConstraint rightHandThumbIKConstraint = rightHandThumbIK.AddComponent<TwoBoneIKConstraint>();
+
+        // Spine Follower
+        FollowTransformPosLateUpdate spineFollowerPosLateUpdate = spineFollower.AddComponent<FollowTransformPosLateUpdate>();
+
+        GunHolderAnimated gunHolderAnim = gunHolderAnimated.AddComponent<GunHolderAnimated>();
+        Slot gunHolderSlot = gunHolder.AddComponent<Slot>();
+
+        FollowLocalPositionWithAxis interactPointerLocalPosition = interactPointer.AddComponent<FollowLocalPositionWithAxis>();
+
+        // Slots/Sockets
+        FollowTransformPosAndRot rightHandSlotFollow = rightHandSlot.AddComponent<FollowTransformPosAndRot>();
+        FollowTransformPosAndRot playerBackSlotsFollow = playerBackSlots.AddComponent<FollowTransformPosAndRot>();
+        FollowTransformPosAndRot rightUpLegSlotFollow = rightUpLegSlot.AddComponent<FollowTransformPosAndRot>();
+
+        Slot rifleSlotOneSlot = rifleSlotOne.AddComponent<Slot>();
+        Slot rifleSlotTwoSlot = rifleSlotTwo.AddComponent<Slot>();
+        
+        Slot pistolSlotSlot = pistolSlot.AddComponent<Slot>();
+        
+        Slot knifeSlotSlot = knifeSlot.AddComponent<Slot>();
+
+        FollowTransformPosAndRot leftHandIndexIKTargetFollow = leftHandIndexIKTarget.AddComponent<FollowTransformPosAndRot>();
+        FollowTransformPosAndRot leftHandMiddleIKTargetFollow = leftHandMiddleIKTarget.AddComponent<FollowTransformPosAndRot>();
+        FollowTransformPosAndRot leftHandPinkyIKTargetFollow = leftHandPinkyIKTarget.AddComponent<FollowTransformPosAndRot>();
+        FollowTransformPosAndRot leftHandRingIKTargetFollow = leftHandRingIKTarget.AddComponent<FollowTransformPosAndRot>();
+        FollowTransformPosAndRot leftHandThumbIKTargetFollow = leftHandThumbIKTarget.AddComponent<FollowTransformPosAndRot>();
+
+
+        FollowTransformPosAndRot rightHandIndexIKTargetFollow = rightHandIndexIKTarget.AddComponent<FollowTransformPosAndRot>();
+        FollowTransformPosAndRot rightHandMiddleIKTargetFollow = rightHandMiddleIKTarget.AddComponent<FollowTransformPosAndRot>();
+        FollowTransformPosAndRot rightHandPinkyIKTargetFollow = rightHandPinkyIKTarget.AddComponent<FollowTransformPosAndRot>();
+        FollowTransformPosAndRot rightHandRingIKTargetFollow = rightHandRingIKTarget.AddComponent<FollowTransformPosAndRot>();
+        FollowTransformPosAndRot rightHandThumbIKTargetFollow = rightHandThumbIKTarget.AddComponent<FollowTransformPosAndRot>();
+
+        // Left side target constraint
+
+        FollowTransformRot leftHandIndex1ConstraintTargetFollow = leftHandConstraintIndex1Target.AddComponent<FollowTransformRot>();
+        FollowTransformRot leftHandIndex2ConstraintTargetFollow = leftHandConstraintIndex2Target.AddComponent<FollowTransformRot>();
+        FollowTransformRot leftHandIndex3ConstraintTargetFollow = leftHandConstraintIndex3Target.AddComponent<FollowTransformRot>();
+
+        FollowTransformRot leftHandMiddle1ConstraintTargetFollow = leftHandConstraintMiddle1Target.AddComponent<FollowTransformRot>();
+        FollowTransformRot leftHandMiddle2ConstraintTargetFollow = leftHandConstraintMiddle2Target.AddComponent<FollowTransformRot>();
+        FollowTransformRot leftHandMiddle3ConstraintTargetFollow = leftHandConstraintMiddle3Target.AddComponent<FollowTransformRot>();
+
+        FollowTransformRot leftHandPinky1ConstraintTargetFollow = leftHandConstraintPinky1Target.AddComponent<FollowTransformRot>();
+        FollowTransformRot leftHandPinky2ConstraintTargetFollow = leftHandConstraintPinky2Target.AddComponent<FollowTransformRot>();
+        FollowTransformRot leftHandPinky3ConstraintTargetFollow = leftHandConstraintPinky3Target.AddComponent<FollowTransformRot>();
+
+        FollowTransformRot leftHandRing1ConstraintTargetFollow = leftHandConstraintRing1Target.AddComponent<FollowTransformRot>();
+        FollowTransformRot leftHandRing2ConstraintTargetFollow = leftHandConstraintRing2Target.AddComponent<FollowTransformRot>();
+        FollowTransformRot leftHandRing3ConstraintTargetFollow = leftHandConstraintRing3Target.AddComponent<FollowTransformRot>();
+
+        FollowTransformRot leftHandThumb1ConstraintTargetFollow = leftHandConstraintThumb1Target.AddComponent<FollowTransformRot>();
+        FollowTransformRot leftHandThumb2ConstraintTargetFollow = leftHandConstraintThumb2Target.AddComponent<FollowTransformRot>();
+        FollowTransformRot leftHandThumb3ConstraintTargetFollow = leftHandConstraintThumb3Target.AddComponent<FollowTransformRot>();
+
+        // Right side target constraint
+
+        FollowTransformRot rightHandIndex1ConstraintTargetFollow = rightHandConstraintIndex1Target.AddComponent<FollowTransformRot>();
+        FollowTransformRot rightHandIndex2ConstraintTargetFollow = rightHandConstraintIndex2Target.AddComponent<FollowTransformRot>();
+        FollowTransformRot rightHandIndex3ConstraintTargetFollow = rightHandConstraintIndex3Target.AddComponent<FollowTransformRot>();
+
+        FollowTransformRot rightHandMiddle1ConstraintTargetFollow = rightHandConstraintMiddle1Target.AddComponent<FollowTransformRot>();
+        FollowTransformRot rightHandMiddle2ConstraintTargetFollow = rightHandConstraintMiddle2Target.AddComponent<FollowTransformRot>();
+        FollowTransformRot rightHandMiddle3ConstraintTargetFollow = rightHandConstraintMiddle3Target.AddComponent<FollowTransformRot>();
+
+        FollowTransformRot rightHandPinky1ConstraintTargetFollow = rightHandConstraintPinky1Target.AddComponent<FollowTransformRot>();
+        FollowTransformRot rightHandPinky2ConstraintTargetFollow = rightHandConstraintPinky2Target.AddComponent<FollowTransformRot>();
+        FollowTransformRot rightHandPinky3ConstraintTargetFollow = rightHandConstraintPinky3Target.AddComponent<FollowTransformRot>();
+
+        FollowTransformRot rightHandRing1ConstraintTargetFollow = rightHandConstraintRing1Target.AddComponent<FollowTransformRot>();
+        FollowTransformRot rightHandRing2ConstraintTargetFollow = rightHandConstraintRing2Target.AddComponent<FollowTransformRot>();
+        FollowTransformRot rightHandRing3ConstraintTargetFollow = rightHandConstraintRing3Target.AddComponent<FollowTransformRot>();
+
+        FollowTransformRot rightHandThumb1ConstraintTargetFollow = rightHandConstraintThumb1Target.AddComponent<FollowTransformRot>();
+        FollowTransformRot rightHandThumb2ConstraintTargetFollow = rightHandConstraintThumb2Target.AddComponent<FollowTransformRot>();
+        FollowTransformRot rightHandThumb3ConstraintTargetFollow = rightHandConstraintThumb3Target.AddComponent<FollowTransformRot>();
+
+
+
         #endregion
 
         #region Body Constraints
@@ -348,21 +659,203 @@ public class CharacterCreatorSwitcherSystemWindow : EditorWindow
         spine2Constraint.data.offset = new Vector3(0, 50, 0);
         #endregion
 
+        #region Constraints
+
+        // Rig
+        leftHandBoneIK.data.root = playerModelAnimator.GetBoneTransform(HumanBodyBones.LeftUpperArm);
+        leftHandBoneIK.data.mid = playerModelAnimator.GetBoneTransform(HumanBodyBones.LeftLowerArm);
+        leftHandBoneIK.data.tip = playerModelAnimator.GetBoneTransform(HumanBodyBones.LeftHand);
+        leftHandBoneIK.data.target = leftHandIKTarget.transform;
+
+
+        rightHandBoneIK.data.root = playerModelAnimator.GetBoneTransform(HumanBodyBones.RightUpperArm);
+        rightHandBoneIK.data.mid = playerModelAnimator.GetBoneTransform(HumanBodyBones.RightLowerArm);
+        rightHandBoneIK.data.tip = playerModelAnimator.GetBoneTransform(HumanBodyBones.RightHand);
+        rightHandBoneIK.data.target = leftHandIKTarget.transform;
+
+
+        Transform tipLeftIndex = playerModelAnimator.GetBoneTransform(HumanBodyBones.LeftIndexDistal);
+        leftHandIndexIKConstraint.data.tip = tipLeftIndex;
+        leftHandIndexIKConstraint.data.mid = tipLeftIndex.parent;
+        leftHandIndexIKConstraint.data.root = tipLeftIndex.parent.parent;
+        leftHandIndexIKConstraint.data.target = leftHandIndexIKTarget.transform;
+
+        Transform tipLeftMiddle = playerModelAnimator.GetBoneTransform(HumanBodyBones.LeftMiddleDistal);
+        leftHandMiddleIKConstraint.data.tip = tipLeftMiddle;
+        leftHandMiddleIKConstraint.data.mid = tipLeftMiddle.parent;
+        leftHandMiddleIKConstraint.data.root = tipLeftMiddle.parent.parent;
+        leftHandMiddleIKConstraint.data.target = leftHandMiddleIKTarget.transform;
+
+        Transform tipLeftPinky = playerModelAnimator.GetBoneTransform(HumanBodyBones.LeftLittleDistal);
+        leftHandPinkyIKConstraint.data.tip = tipLeftPinky;
+        leftHandPinkyIKConstraint.data.mid = tipLeftPinky.parent;
+        leftHandPinkyIKConstraint.data.root = tipLeftPinky.parent.parent;
+        leftHandPinkyIKConstraint.data.target = leftHandPinkyIKTarget.transform;
+
+        Transform tipLeftRing = playerModelAnimator.GetBoneTransform(HumanBodyBones.LeftRingDistal);
+        leftHandRingIKConstraint.data.tip = tipLeftRing;
+        leftHandRingIKConstraint.data.mid = tipLeftRing.parent;
+        leftHandRingIKConstraint.data.root = tipLeftRing.parent.parent;
+        leftHandRingIKConstraint.data.target = leftHandRingIKTarget.transform;
+
+        Transform tipLeftThumb = playerModelAnimator.GetBoneTransform(HumanBodyBones.LeftThumbDistal);
+        leftHandThumbIKConstraint.data.tip = tipLeftThumb;
+        leftHandThumbIKConstraint.data.mid = tipLeftThumb.parent;
+        leftHandThumbIKConstraint.data.root = tipLeftThumb.parent.parent;
+        leftHandThumbIKConstraint.data.target = leftHandThumbIKTarget.transform;
+
+
+        // 
+
+        Transform tipRightIndex = playerModelAnimator.GetBoneTransform(HumanBodyBones.RightIndexDistal);
+        rightHandIndexIKConstraint.data.tip = tipRightIndex;
+        rightHandIndexIKConstraint.data.mid = tipRightIndex.parent;
+        rightHandIndexIKConstraint.data.root = tipRightIndex.parent.parent;
+        rightHandIndexIKConstraint.data.target = rightHandIndexIKTarget.transform;
+
+        Transform tipRightMiddle = playerModelAnimator.GetBoneTransform(HumanBodyBones.RightMiddleDistal);
+        rightHandMiddleIKConstraint.data.tip = tipRightMiddle;
+        rightHandMiddleIKConstraint.data.mid = tipRightMiddle.parent;
+        rightHandMiddleIKConstraint.data.root = tipRightMiddle.parent.parent;
+        rightHandMiddleIKConstraint.data.target = rightHandMiddleIKTarget.transform;
+
+        Transform tipRightPinky = playerModelAnimator.GetBoneTransform(HumanBodyBones.RightLittleDistal);
+        rightHandPinkyIKConstraint.data.tip = tipRightPinky;
+        rightHandPinkyIKConstraint.data.mid = tipRightPinky.parent;
+        rightHandPinkyIKConstraint.data.root = tipRightPinky.parent.parent;
+        rightHandPinkyIKConstraint.data.target = rightHandPinkyIKTarget.transform;
+
+        Transform tipRightRing = playerModelAnimator.GetBoneTransform(HumanBodyBones.RightRingDistal);
+        rightHandRingIKConstraint.data.tip = tipRightRing;
+        rightHandRingIKConstraint.data.mid = tipRightRing.parent;
+        rightHandRingIKConstraint.data.root = tipRightRing.parent.parent;
+        rightHandRingIKConstraint.data.target = rightHandRingIKTarget.transform;
+
+        Transform tipRightThumb = playerModelAnimator.GetBoneTransform(HumanBodyBones.RightThumbDistal);
+        rightHandThumbIKConstraint.data.tip = tipRightThumb;
+        rightHandThumbIKConstraint.data.mid = tipRightThumb.parent;
+        rightHandThumbIKConstraint.data.root = tipRightThumb.parent.parent;
+        rightHandThumbIKConstraint.data.target = rightHandThumbIKTarget.transform;
+
+
+        // SpineFollower
+        spineFollowerPosLateUpdate.Target = playerModelAnimator.GetBoneTransform(HumanBodyBones.UpperChest);
+
+        gunHolderSlot.SmoothTime = 0.2f;
+
+        // Slots/Sockets
+        rightHandSlotFollow.Target = playerModelAnimator.GetBoneTransform(HumanBodyBones.RightHand);
+        playerBackSlotsFollow.Target = playerModelAnimator.GetBoneTransform(HumanBodyBones.UpperChest);
+
+        rightUpLegSlotFollow.Target = playerModelAnimator.GetBoneTransform(HumanBodyBones.RightUpperLeg);
+        rightUpLegSlotFollow.MaintainOffset = true;
+
+
+        rifleSlotOneSlot.SmoothTime = 0.2f;
+        rifleSlotTwoSlot.SmoothTime = 0.2f;
+        pistolSlotSlot.SmoothTime = 0.2f;
+        knifeSlotSlot.SmoothTime = 0.2f;
+
+
+
+        #endregion
+
         #region Constraints Weight Modifier
-        // /// /// //
-        SerializedObject iKBasedFingersWeightModifierSObj = new SerializedObject(iKBasedFingersWeightModifier);
-        SerializedProperty constraintsWeightModifierProperty = iKBasedFingersWeightModifierSObj.FindProperty(_iKConstraintsPropertyName);
+        SerializedProperty constraintsWeightModifierProperty = GetPropertyFromObj(iKBasedFingersWeightModifier, _iKConstraintsPropertyName);
 
-        constraintsWeightModifierProperty.arraySize++;
-        SerializedProperty newElementProperty = constraintsWeightModifierProperty.GetArrayElementAtIndex(constraintsWeightModifierProperty.arraySize - 1);
+        CreateAndAssignElement(constraintsWeightModifierProperty, leftHandIndexIK);
+        CreateAndAssignElement(constraintsWeightModifierProperty, leftHandMiddleIK);
+        CreateAndAssignElement(constraintsWeightModifierProperty, leftHandPinkyIK);
+        CreateAndAssignElement(constraintsWeightModifierProperty, leftHandRingIK);
+        CreateAndAssignElement(constraintsWeightModifierProperty, leftHandThumbIK);
+        CreateAndAssignElement(constraintsWeightModifierProperty, rightHandIndexIK);
+        CreateAndAssignElement(constraintsWeightModifierProperty, rightHandMiddleIK);
+        CreateAndAssignElement(constraintsWeightModifierProperty, rightHandPinkyIK);
+        CreateAndAssignElement(constraintsWeightModifierProperty, rightHandRingIK);
+        CreateAndAssignElement(constraintsWeightModifierProperty, rightHandThumbIK);
 
-        newElementProperty.objectReferenceValue = leftHandIK;
+        SerializedProperty rotationConstrainedWeight = GetPropertyFromObj(rotationConstrainedFingersWeightModifier, _iKConstraintsPropertyName);
+             
 
-        iKBasedFingersWeightModifierSObj.ApplyModifiedProperties();
+
+        CreateAndAssignElement(rotationConstrainedWeight, leftHandIndex1Constraint);
+        CreateAndAssignElement(rotationConstrainedWeight, leftHandIndex2Constraint);
+        CreateAndAssignElement(rotationConstrainedWeight, leftHandIndex3Constraint);
+
+        CreateAndAssignElement(rotationConstrainedWeight, leftHandMiddle1Constraint);
+        CreateAndAssignElement(rotationConstrainedWeight, leftHandMiddle2Constraint);
+        CreateAndAssignElement(rotationConstrainedWeight, leftHandMiddle3Constraint);
+
+        CreateAndAssignElement(rotationConstrainedWeight, leftHandPinky1Constraint);
+        CreateAndAssignElement(rotationConstrainedWeight, leftHandPinky2Constraint);
+        CreateAndAssignElement(rotationConstrainedWeight, leftHandPinky3Constraint);
+
+        CreateAndAssignElement(rotationConstrainedWeight, leftHandRing1Constraint);
+        CreateAndAssignElement(rotationConstrainedWeight, leftHandRing2Constraint);
+        CreateAndAssignElement(rotationConstrainedWeight, leftHandRing3Constraint);
+
+        CreateAndAssignElement(rotationConstrainedWeight, leftHandThumb1Constraint);
+        CreateAndAssignElement(rotationConstrainedWeight, leftHandThumb2Constraint);
+        CreateAndAssignElement(rotationConstrainedWeight, leftHandThumb3Constraint);
+
+
+        CreateAndAssignElement(rotationConstrainedWeight, rightHandIndex1Constraint);
+        CreateAndAssignElement(rotationConstrainedWeight, rightHandIndex2Constraint);
+        CreateAndAssignElement(rotationConstrainedWeight, rightHandIndex3Constraint);
+
+        CreateAndAssignElement(rotationConstrainedWeight, rightHandMiddle1Constraint);
+        CreateAndAssignElement(rotationConstrainedWeight, rightHandMiddle2Constraint);
+        CreateAndAssignElement(rotationConstrainedWeight, rightHandMiddle3Constraint);
+
+        CreateAndAssignElement(rotationConstrainedWeight, rightHandPinky1Constraint);
+        CreateAndAssignElement(rotationConstrainedWeight, rightHandPinky2Constraint);
+        CreateAndAssignElement(rotationConstrainedWeight, rightHandPinky3Constraint);
+
+        CreateAndAssignElement(rotationConstrainedWeight, rightHandRing1Constraint);
+        CreateAndAssignElement(rotationConstrainedWeight, rightHandRing2Constraint);
+        CreateAndAssignElement(rotationConstrainedWeight, rightHandRing3Constraint);
+
+        CreateAndAssignElement(rotationConstrainedWeight, rightHandThumb1Constraint);
+        CreateAndAssignElement(rotationConstrainedWeight, rightHandThumb2Constraint);
+        CreateAndAssignElement(rotationConstrainedWeight, rightHandThumb3Constraint);
+
+        SerializedProperty handsIKModifier = GetPropertyFromObj(handsIKWeightModifier, _iKConstraintsPropertyName);
+
+        CreateAndAssignElement(handsIKModifier, leftHandIK);
+        CreateAndAssignElement(handsIKModifier, rightHandIK);
+
+
         #endregion
 
-        #region Hand Constraints
+        #region player Refs
+        PlayerController controller = playerParentGameObject.GetComponent<PlayerController>();
+        AssignPrivatePropertyObj(controller, playerParentGameObject.GetComponent<PlayerUI>(), _playerUIPropertyName);
+        AssignPrivatePropertyObj(controller, playerModelAnimator, _playerAnimatorName);
+        AssignPrivatePropertyObj(controller, gunHolderAnim, _gunHolderAnimatorName);
+        AssignPrivatePropertyObj(controller, centerSpinePos.transform, _centerSpinePosName);
+        AssignPrivatePropertyObj(controller, cameraHolder.transform, _cameraHolderName);
+        AssignPrivatePropertyObj(controller, playerModelAnimator.GetBoneTransform(HumanBodyBones.Head), _headTransformName);
+        AssignPrivatePropertyObj(controller, gunHolder.transform, _gunHolderName);
+        AssignPrivatePropertyObj(controller, iKBasedFingersWeight.GetComponent<ConstraintsWeightModifier>(), _iKBasedFingersWeightModifierName);
+        AssignPrivatePropertyObj(controller, rotationConstrainedFingersWeight.GetComponent<ConstraintsWeightModifier>(), _rotationConstraitBasedFingersWeightModifierName);
+
+        AssignPrivatePropertyObj(rig.AddComponent<RigWeightSetter>(), rig.GetComponent<Rig>(), rigWeightSetterRigPropertyName);
         #endregion
+    }
+
+    void CreateAndAssignElement(SerializedProperty property, UnityEngine.Object objValue)
+    {
+        property.arraySize++;
+        SerializedProperty newElementProperty = property.GetArrayElementAtIndex(property.arraySize - 1);
+
+        newElementProperty.objectReferenceValue = objValue;
+
+        property.serializedObject.ApplyModifiedProperties();
+    }
+
+    SerializedProperty GetPropertyFromObj(UnityEngine.Object obj, string propertyName)
+    {
+        return new SerializedObject(obj).FindProperty(propertyName);
     }
 
     void AssignPrivatePropertyObj(Component component, UnityEngine.Object objReference, string propertyName)
@@ -372,4 +865,6 @@ public class CharacterCreatorSwitcherSystemWindow : EditorWindow
         rigProperty.objectReferenceValue = objReference;
         serializedObject.ApplyModifiedProperties();
     }
+
+    
 }
