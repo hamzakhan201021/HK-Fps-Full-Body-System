@@ -36,6 +36,14 @@ public class WeaponBase : MonoBehaviour, IInteractable
     public int CurrentAmmo;
 
     public CinemachineImpulseSource RecoilImpulseSource;
+    [Space]
+    [Header("Behaviour Settings")]
+    public bool UseSway = true;
+
+    [Tooltip("Should this weapon be moved to lef")]
+    public ItemStartUseBehaviour ItemUseBehaviour = ItemStartUseBehaviour.MoveToLeftHand;
+
+    public HealthDamageData WeaponHealthDamageData;
 
     [Space]
     [Header("Audio")]
@@ -67,11 +75,22 @@ public class WeaponBase : MonoBehaviour, IInteractable
     public UnityEvent OnAimEnter;
     public UnityEvent OnAimExit;
     public UnityEvent OnReloadStart;
-    public UnityEvent<PlayerController> OnInteraction;
-    public UnityEvent<PlayerController, bool> OnWeaponStartOrStopUse;
+
+    // CHANGES (
+    //public UnityEvent<PlayerController> OnInteraction;
+    //public UnityEvent<PlayerController, bool> OnWeaponStartOrStopUse;
+
+    public UnityEvent<HKPlayerInteractionBase> OnInteraction;
+    public UnityEvent<HKPlayerWeaponManager, bool> OnWeaponStartOrStopUse;
+    // CHANGES )
 
     private bool _isCurrentWeapon;
-    private PlayerController _controller;
+
+    // CHANGES (
+    //private PlayerController _controller;
+
+    private HKPlayerWeaponManager _controller;
+    // CHANGES )
 
     [HideInInspector] public WeaponHeatState WeaponHeatState { get; private set; } = WeaponHeatState.cool;
     private float _currentExtraHeat;
@@ -97,8 +116,10 @@ public class WeaponBase : MonoBehaviour, IInteractable
     // update is called once per frame.
     public virtual void Update()
     {
-        // Handle Sway & Recoil.
-        HandleSwayAndRecoil();
+        // CHANGES (
+        //// Handle Sway & Recoil.
+        //HandleSwayAndRecoil();
+        // CHANGES )
 
         // Handle Weapon Heating
         HandleWeaponHeating();
@@ -107,10 +128,19 @@ public class WeaponBase : MonoBehaviour, IInteractable
         HandleShooting();
     }
 
-    private void HandleSwayAndRecoil()
+    // CHANGES (
+    public virtual void UpdateWeapon(Vector2 lookInput, float lookUpLimit, float lookDownLimit, float xRotation)
+    {
+        HandleSwayAndRecoil(lookInput, lookUpLimit, lookDownLimit, xRotation);
+    }
+    // CHANGES )
+
+    // CHANGES COMMENTED OUT = OLD
+    //private void HandleSwayAndRecoil()
+    private void HandleSwayAndRecoil(Vector2 lookInput, float lookUpLimit, float lookDownLimit, float xRotation)
     {
         // Check if we are the current weapon.
-        if (_isCurrentWeapon)
+        if (_isCurrentWeapon && UseSway)
         {
             // Lerp the target rotation to zero.
             _targetRotation = Vector3.Lerp(_targetRotation, Vector3.zero, WeaponData.ReturnSpeed * Time.deltaTime);
@@ -118,16 +148,28 @@ public class WeaponBase : MonoBehaviour, IInteractable
             // Slerp the current rotation to the target rotation.
             _currentRotation = Vector3.Slerp(_currentRotation, _targetRotation, WeaponData.Snappiness * Time.deltaTime);
 
-            float lookX = _controller.Input.Player.Look.ReadValue<Vector2>().x * WeaponData.SwayAmount;
-            float lookY = _controller.Input.Player.Look.ReadValue<Vector2>().y * WeaponData.SwayAmount;
+            // CHANGES (
+            //float lookX = _controller.Input.Player.Look.ReadValue<Vector2>().x * WeaponData.SwayAmount;
+            //float lookY = _controller.Input.Player.Look.ReadValue<Vector2>().y * WeaponData.SwayAmount;
+
+            float lookX = lookInput.x * WeaponData.SwayAmount;
+            float lookY = lookInput.y * WeaponData.SwayAmount;
+            // CHANGES )
 
             Quaternion swayRotation;
             Quaternion finalRot;
 
-            float currentLookUpLimit = -_controller.GetLookUpLimit();
-            float currentLookDownLimit = _controller.GetLookDownLimit();
+            // CHANGES (
+            //float currentLookUpLimit = -_controller.GetLookUpLimit();
+            //float currentLookDownLimit = _controller.GetLookDownLimit();
 
-            if (_controller.GetXRotation() > (currentLookDownLimit - 1) || _controller.GetXRotation() < (currentLookUpLimit + 1))
+            float currentLookUpLimit = -lookUpLimit;
+            float currentLookDownLimit = lookDownLimit;
+            // CHANGES )
+
+            // CHANGES OLD CODE HERE IS COMMENTED OUT.
+            //if (_controller.GetXRotation() > (currentLookDownLimit - 1) || _controller.GetXRotation() < (currentLookUpLimit + 1))
+            if (xRotation > (currentLookDownLimit - 1) || xRotation < (currentLookUpLimit + 1))
             {
                 finalRot = Quaternion.AngleAxis(-lookX, Vector3.forward);
             }
@@ -192,72 +234,99 @@ public class WeaponBase : MonoBehaviour, IInteractable
     /// <summary>
     /// plays the recoil on the weapon.
     /// </summary>
-    public bool Shoot()
+    public virtual ShootResult Shoot()
     {
-        // Return false if any of the conditions meet.
-        if (_isReloading || CurrentAmmo <= 0 || _gunShotTimer > 0f || WeaponHeatState != WeaponHeatState.cool) return false;
+        ShootResult shootResult = new ShootResult(false, false);
+
+        if (_gunShotTimer > 0f) return shootResult;
+
+        if (WeaponData.WeaponType == WeaponType.knife)
+        {
+            // Knife Specific Code (Not the best way though!, But preferred).
+
+            // Set shoot result val 02.
+            shootResult.BumpRotationEffect = false;
+
+            _gunShotTimer = WeaponData.TimeBetweenShot;
+        }
+        else
+        {
+            // Return false if any of the conditions meet.
+            if (_isReloading || CurrentAmmo <= 0 || WeaponHeatState != WeaponHeatState.cool) return shootResult;
+
+            shootResult.BumpRotationEffect = true;
+
+            // Get position and direction.
+            Vector3 position = FirePoint.position;
+            Vector3 direction = RandomizeDirection(FirePoint.forward, WeaponData.MaxBulletSpreadAngle);
+
+            // Perform Shooting.
+            if (WeaponData.FiringType == FiringType.raycast)
+            {
+                // check if we hit something.
+                if (Physics.Raycast(position, direction, out RaycastHit hit, WeaponData.MaxShootRange))
+                {
+                    // get the IHitable interface reference.
+                    IHitable iHitable = hit.transform.GetComponent<IHitable>();
+
+                    // check if hitable is not null.
+                    if (iHitable != null)
+                    {
+                        // Hit.
+                        iHitable.Hit(hit.transform.gameObject, hit.point, hit.normal, WeaponHealthDamageData);
+                    }
+                }
+            }
+            else if (WeaponData.FiringType == FiringType.projectile)
+            {
+                Projectile projectile = Instantiate(WeaponData.ProjectilePrefab, position, Quaternion.LookRotation(direction)).GetComponent<Projectile>();
+                projectile.Fire(WeaponData.ProjectileForce, WeaponHealthDamageData);
+            }
+
+            // Deplete Ammo.
+            CurrentAmmo -= 1;
+
+            // Add Heat and set Gun Shot timer.
+            _currentExtraHeat += WeaponData.ExtraHeatIncreasePerShot;
+            _gunShotTimer = WeaponData.TimeBetweenShot;
+
+            // Play Effects.
+            MuzzleFlashEffect.Play();
+            AudioSource.Play();
+
+            // Check if we should automatically eject a shell out.
+            if (WeaponData.EjectShellOnShoot) ShellEjectEffect.Play();
+
+            // Recoil
+            // Set the target rotation to the recoil calculation...
+            _targetRotation += new Vector3(WeaponData.RecoilX, Random.Range(-WeaponData.RecoilY, WeaponData.RecoilY), Random.Range(-WeaponData.RecoilZ, WeaponData.RecoilZ));
+
+            //// Get Impulse Recoil.
+            //Vector3 impulseRecoil = WeaponData.CinemachineRecoilImpulse;
+
+            // CHANGES, USING CLASSIC IMPULSE SYSTEM.
+            // Generate impulse.
+            //RecoilImpulseSource.GenerateImpulse(new Vector3(Random.Range(-impulseRecoil.x, impulseRecoil.x)
+            //    , Random.Range(-impulseRecoil.y, impulseRecoil.y)
+            //    , impulseRecoil.z));
+            //CameraShakeManager.instance.CameraShakeVelocity(RecoilImpulseSource, new Vector3(Random.Range(-impulseRecoil.x, impulseRecoil.x)
+            //    , Random.Range(-impulseRecoil.y, impulseRecoil.y)
+            //    , impulseRecoil.z));
+
+            // CLASSIC IMPULSE SYSTEM.
+            CameraShakeManager.instance.CameraShakeFromProfile(WeaponData.ShakeProfile, RecoilImpulseSource);
+        }
 
         // Invoke Event
         OnShoot.Invoke();
 
-        // Get position and direction.
-        Vector3 position = FirePoint.position;
-        Vector3 direction = RandomizeDirection(FirePoint.forward, WeaponData.MaxBulletSpreadAngle);
-
-        // Perform Shooting.
-        if (WeaponData.FiringType == FiringType.raycast)
-        {
-            // check if we hit something.
-            if (Physics.Raycast(position, direction, out RaycastHit hit, WeaponData.MaxShootRange))
-            {
-                // get the IHitable interface reference.
-                IHitable iHitable = hit.transform.GetComponent<IHitable>();
-
-                // check if hitable is not null.
-                if (iHitable != null)
-                {
-                    // Hit.
-                    iHitable.Hit(hit.transform.gameObject, hit.point, hit.normal);
-                }
-            }
-        }
-        else if (WeaponData.FiringType == FiringType.projectile)
-        {
-            Projectile projectile = Instantiate(WeaponData.ProjectilePrefab, position, Quaternion.LookRotation(direction)).GetComponent<Projectile>();
-            projectile.Fire(WeaponData.ProjectileForce);
-        }
-
-        // Deplete Ammo.
-        CurrentAmmo -= 1;
-
-        // Add Heat and set Gun Shot timer.
-        _currentExtraHeat += WeaponData.ExtraHeatIncreasePerShot;
-        _gunShotTimer = WeaponData.TimeBetweenShot;
-
-        // Play Effects.
-        MuzzleFlashEffect.Play();
-        AudioSource.Play();
-
-        // Check if we should automatically eject a shell out.
-        if (WeaponData.EjectShellOnShoot) ShellEjectEffect.Play();
-
-        // Recoil
-        // Set the target rotation to the recoil calculation...
-        _targetRotation += new Vector3(WeaponData.RecoilX, Random.Range(-WeaponData.RecoilY, WeaponData.RecoilY), Random.Range(-WeaponData.RecoilZ, WeaponData.RecoilZ));
-
-        // Get Impulse Recoil.
-        Vector3 impulseRecoil = WeaponData.CinemachineRecoilImpulse;
-
-        // Generate impulse.
-        RecoilImpulseSource.GenerateImpulse(new Vector3(Random.Range(-impulseRecoil.x, impulseRecoil.x)
-            , Random.Range(-impulseRecoil.y, impulseRecoil.y)
-            , impulseRecoil.z));
-
         // Animator
         Animator.SetTrigger(_shootTriggerNameHash);
 
+        shootResult.ShootActionSuccess = true;
+
         // If we come here we have successfully shot : Return True.
-        return true;
+        return shootResult;
     }
 
     /// <summary>
@@ -266,7 +335,7 @@ public class WeaponBase : MonoBehaviour, IInteractable
     /// <param name="direction"></param>
     /// <param name="maxAngle"></param>
     /// <returns></returns>
-    Vector3 RandomizeDirection(Vector3 direction, float maxAngle)
+    protected Vector3 RandomizeDirection(Vector3 direction, float maxAngle)
     {
         // Get Random Angles.
         float angleY = Random.Range(-maxAngle, maxAngle);
@@ -302,7 +371,7 @@ public class WeaponBase : MonoBehaviour, IInteractable
         Animator.SetTrigger(_reloadTriggerNameHash);
     }
 
-    private IEnumerator ReloadingTime()
+    protected IEnumerator ReloadingTime()
     {
         _isReloading = true;
         yield return new WaitForSeconds(WeaponData.ReloadingAnimationTime);
@@ -313,7 +382,7 @@ public class WeaponBase : MonoBehaviour, IInteractable
     /// Plays the mag in out audio clip and parents the mag to the correct hand.
     /// </summary>
     /// <param name="animationEventData"></param>
-    public void SetMagParentToHand(AnimationEvent animationEventData)
+    public virtual void SetMagParentToHand(AnimationEvent animationEventData)
     {
         // Play the mag out audio.
         AudioSource.PlayClipAtPoint(MagInOutAudioClip, Mag.transform.position, 1.0f);
@@ -336,7 +405,7 @@ public class WeaponBase : MonoBehaviour, IInteractable
     /// <summary>
     /// Sets the mag parent to original and plays the mag in out audio.
     /// </summary>
-    public void SetMagToMagParent()
+    public virtual void SetMagToMagParent()
     {
         // Play the mag in audio.
         AudioSource.PlayClipAtPoint(MagInOutAudioClip, Mag.transform.position, 1.0f);
@@ -361,7 +430,7 @@ public class WeaponBase : MonoBehaviour, IInteractable
     /// <summary>
     /// This Function Is Spawning A mag at the original mag point & Disables Actual Mag.
     /// </summary>
-    public void SpawnMagAtMagPosition()
+    public virtual void SpawnMagAtMagPosition()
     {
         // Spawn Clone of the (Prefab) Mag.
         Instantiate(MagPrefab, Mag.transform.position, Mag.transform.rotation, null);
@@ -373,7 +442,7 @@ public class WeaponBase : MonoBehaviour, IInteractable
     /// <summary>
     /// This Function Sets Active of the mag to true.
     /// </summary>
-    public void TakeOutNewMag()
+    public virtual void TakeOutNewMag()
     {
         // Enable actual mag.
         Mag.SetActive(true);
@@ -382,7 +451,7 @@ public class WeaponBase : MonoBehaviour, IInteractable
     /// <summary>
     /// This Function plays the reloadAudioClip.
     /// </summary>
-    public void PlayAudioClip(AnimationEvent animationData)
+    public virtual void PlayAudioClip(AnimationEvent animationData)
     {
         // Get Audio Clip.
         AudioClip providedReloadAudioClip = (AudioClip)animationData.objectReferenceParameter;
@@ -395,61 +464,99 @@ public class WeaponBase : MonoBehaviour, IInteractable
     /// <summary>
     /// Play's The Shell Eject effect Particle System.
     /// </summary>
-    public void PlayShellEjectEffect()
+    public virtual void PlayShellEjectEffect()
     {
         ShellEjectEffect.Play();
     }
 
     // Return The Interaction Range Message
-    public string GetMessage()
+    public virtual string GetMessage()
     {
         return Message;
     }
 
-    public bool CanInteract(PlayerController playerController)
+    // CHANGES (
+
+    //public bool CanInteract(PlayerController playerController)
+    //{
+    //    return playerController.CurrentWeapon() != this && playerController.CurrentWeapon().WeaponData.WeaponType == WeaponData.WeaponType;
+    //}
+
+    public virtual bool CanInteract(HKPlayerInteractionBase interactionController)
     {
-        return playerController.CurrentWeapon() != this && playerController.CurrentWeapon().WeaponData.WeaponType == WeaponData.WeaponType;
+        //return weaponManager.CurrentWeapon() != this && weaponManager.CurrentWeapon().WeaponData.WeaponType == WeaponData.WeaponType;
+        return interactionController.CurrentWeapon() != this && interactionController.CurrentWeapon().WeaponData.WeaponType == WeaponData.WeaponType;
     }
 
+    // CHANGES )
+
     // Interact
-    public void Interact(PlayerController playerController)
+
+    // CHANGES (
+
+    //public void Interact(PlayerController playerController)
+    //{
+    //    // Swap The Weapon.
+    //    playerController.SwapWeapon(this);
+
+    //    // Enable Kinematic
+    //    _weaponRigidbody.isKinematic = true;
+
+    //    // Invoke Event.
+    //    OnInteraction.Invoke(playerController);
+    //}
+
+    public virtual void Interact(HKPlayerInteractionBase interactionController)
     {
         // Swap The Weapon.
-        playerController.SwapWeapon(this);
+        interactionController.SwapWeapon(this);
 
         // Enable Kinematic
         _weaponRigidbody.isKinematic = true;
 
         // Invoke Event.
-        OnInteraction.Invoke(playerController);
+        OnInteraction.Invoke(interactionController);
     }
+    // CHANGES )
 
-    public bool IsCurrentWeapon()
+    public virtual bool IsCurrentWeapon()
     {
         return _isCurrentWeapon;
     }
 
-    public void SetWeaponData(PlayerController controller, bool isCurrentWeapon)
+    // CHANGES (
+    //public void SetWeaponData(PlayerController controller, bool isCurrentWeapon)
+    //{
+    //    _controller = controller;
+    //    _isCurrentWeapon = isCurrentWeapon;
+    //    OnWeaponStartOrStopUse.Invoke(controller, isCurrentWeapon);
+    //}
+
+    public virtual void SetWeaponData(HKPlayerWeaponManager controller, bool isCurrentWeapon)
     {
         _controller = controller;
         _isCurrentWeapon = isCurrentWeapon;
         OnWeaponStartOrStopUse.Invoke(controller, isCurrentWeapon);
     }
 
-    public void DropWeapon()
+    // CHANGES )
+
+    public virtual void DropWeapon()
     {
         _weaponRigidbody.isKinematic = false;
     }
 
-    public void AddForceToWeapon(Vector3 force, ForceMode forceMode = ForceMode.Impulse)
+    public virtual void AddForceToWeapon(Vector3 force, ForceMode forceMode = ForceMode.Impulse)
     {
         _weaponRigidbody.AddForce(force, forceMode);
     }
 
-    public PlayerController GetPlayer()
+    public HKPlayerWeaponManager GetPlayerWeapon()
     {
         return _controller;
     }
+
+    // CHANGES (
 
     public void InvokeOnAimEnter()
     {
@@ -1462,7 +1569,7 @@ public class WeaponBaseEditor : Editor
         #endregion
 
         // Show and open the window from the Menu, (Make a menu item).
-        [MenuItem("HK Fps/Weapon Creator")]
+        [MenuItem("Tools/HK Fps/Weapon/Weapon Creator")]
         public static void ShowWindow()
         {
             GetWindow<WeaponCreator>("WeaponCreator");
@@ -1576,3 +1683,15 @@ public class WeaponBaseEditor : Editor
 }
 #endif
 #endregion
+
+public struct ShootResult
+{
+    public bool ShootActionSuccess;
+    public bool BumpRotationEffect;
+
+    public ShootResult(bool shootActionSuccess, bool bumpRotationEffect)
+    {
+        ShootActionSuccess = shootActionSuccess;
+        BumpRotationEffect = bumpRotationEffect;
+    }
+}

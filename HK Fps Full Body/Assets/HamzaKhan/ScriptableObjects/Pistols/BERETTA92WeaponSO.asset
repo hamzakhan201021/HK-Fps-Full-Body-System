@@ -12,11 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 605f031169e61448a8e7eba60e243620, type: 3}
   m_Name: BERETTA92WeaponSO
   m_EditorClassIdentifier: 
+  ShakeProfile: {fileID: 11400000, guid: c1dd4c0442ca84bdfba54c195824ddd8, type: 2}
   WeaponName: Beretta 92
   WeaponIconSprite: {fileID: 21300028, guid: 6dadef27ec5be4510b8ecb93b41e0b77, type: 3}
   CrossHairSprite: {fileID: 21300000, guid: ea370368f2a1ec74caa77454a2105792, type: 3}
   WeaponIconImageHeight: 50
   WeaponIconImageWidth: 80
+  WeaponUIPositionOffset: {x: 0, y: 0, z: 0}
+  WeaponUIRotationOffset: {x: 0, y: 0, z: 0}
   TimeBetweenShot: 0.1666667
   ReloadingAnimationTime: 2.3
   MaxBulletSpreadAngle: 5
@@ -35,7 +38,7 @@ MonoBehaviour:
   ExtraHeatCoolingThreshold: 25
   ExtraOverheatThreshold: 40
   ClipProjectorPosition: {x: 0.02, y: 0.085, z: 0.525}
-  NewPosition: {x: -0.1, y: -0.2, z: 0.2}
+  NewPosition: {x: -0.2867088, y: -0.3219831, z: -0.07580589}
   NewRotation: {x: 50, y: -90.6, z: -88.4}
   BoxCastSize: {x: 0.06, y: 0.02, z: 0.37}
   BoxCastClippedSize: {x: 0.08, y: 0.22, z: 0.42}
@@ -50,5 +53,5 @@ MonoBehaviour:
   CinemachineRecoilImpulse: {x: 0.002, y: 0.002, z: 0.06}
   SwayAmount: 1.5
   SwaySmooth: 5
-  WeaponPositionOffset: {x: -0.13, y: 0.03, z: 0.2}
+  WeaponPositionOffset: {x: 0.056708798, y: 0.1519831, z: 0.47580588}
   SpineConstraintOffsetY: 0

@@ -134,16 +134,6 @@ public class ScopeEffectManager : MonoBehaviour
     {
         if (!_weapon.IsCurrentWeapon())
         {
-            //_aimingVirtualCamera.gameObject.SetActive(false);
-
-            //if (_isScoped)
-            //{
-            //    VignetteOnAimExitHandler();
-
-            //    _isScoped = false;
-            //    _isAiming = false;
-            //}
-
             return;
         }
 
@@ -153,11 +143,13 @@ public class ScopeEffectManager : MonoBehaviour
 
     private void HandleScopeSystem()
     {
+        if (_weapon == null || _weapon.GetPlayerWeapon() == null) return;
+
         // Check if the Bool that we have stored is different from the actual one.
-        if (_isClipped != _weapon.GetPlayer().IsClipped())
+        if (_isClipped != _weapon.GetPlayerWeapon().IsClipped())
         {
             // Set our bool to the actual one.
-            _isClipped = _weapon.GetPlayer().IsClipped();
+            _isClipped = _weapon.GetPlayerWeapon().IsClipped();
 
             // Check if the new value is false, This means that it was true, Now it is false.
             if (_isClipped == false) OnClippedExit();
@@ -165,9 +157,9 @@ public class ScopeEffectManager : MonoBehaviour
         }
 
         // Check if we are scoped and not clipped and Both the coroutine's are not in progress.
-        if (_isScoped && !_weapon.GetPlayer().IsClipped() && _onShootCoroutineState == CoroutineState.notInProgress
+        if (_isScoped && !_weapon.GetPlayerWeapon().IsClipped() && _onShootCoroutineState == CoroutineState.notInProgress
             && _onReloadCoroutineState == CoroutineState.notInProgress) _aimingVirtualCamera.gameObject.SetActive(true);
-        else if (_isScoped && !_weapon.GetPlayer().IsClipped()) _aimingVirtualCamera.gameObject.SetActive(false);
+        else if (_isScoped && !_weapon.GetPlayerWeapon().IsClipped()) _aimingVirtualCamera.gameObject.SetActive(false);
         else _aimingVirtualCamera.gameObject.SetActive(false);
     }
 
@@ -179,10 +171,24 @@ public class ScopeEffectManager : MonoBehaviour
             _cameraRotationSmoothingSpeed * Time.deltaTime);
 
         // Vignette Effect Values.
-        _vignette.intensity.value = _intensity;
-        _vignette.smoothness.value = _smoothness;
+        TrySetVignetteSettings();
 
         // Camera Blending Values.
+        TrySetBrainSettings();
+    }
+
+    private void TrySetVignetteSettings()
+    {
+        if (_vignette == null) return;
+
+        _vignette.intensity.value = _intensity;
+        _vignette.smoothness.value = _smoothness;
+    }
+
+    private void TrySetBrainSettings()
+    {
+        if (_cinemachineCameraBrain == null) return;
+
         _cinemachineCameraBrain.m_DefaultBlend.m_Time = _cameraBlendTime;
         _cinemachineCameraBrain.m_DefaultBlend.m_Style = _cameraBlendingStyle;
         _cinemachineCameraBrain.m_DefaultBlend.m_CustomCurve = _cameraBlendingCurve;
@@ -372,7 +378,8 @@ public class ScopeEffectManager : MonoBehaviour
             StartCoroutine(ChangeVignetteColor(_toNotAimingEffectDelay, _notAimingVignetteColor, _changeToNotAimingColorTime, false));
     }
 
-    private void OnCheckForScopeEnable(PlayerController controller, bool isCurrentWeapon)
+    // CHANGES from player controller to waepon manager
+    private void OnCheckForScopeEnable(HKPlayerWeaponManager controller, bool isCurrentWeapon)
     {
         _renderCamera.enabled = isCurrentWeapon;
 

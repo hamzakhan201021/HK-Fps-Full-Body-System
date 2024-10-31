@@ -18,9 +18,9 @@ TagManager:
   - Weapon
   - Projectile
   - ScopeRenderingIgnore
-  - 
-  - 
-  - 
+  - Volume
+  - Ragdoll
+  - Shootable
   - 
   - 
   - 

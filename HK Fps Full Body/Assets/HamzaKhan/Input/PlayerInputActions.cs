@@ -179,6 +179,33 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""OpenItemWheel"",
+                    ""type"": ""Button"",
+                    ""id"": ""580ac70a-cb83-453e-a403-2c6ca729f47c"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Detonate"",
+                    ""type"": ""Button"",
+                    ""id"": ""7494b35c-b576-43dc-a4f5-4056f5dbd736"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""RevivePlayer"",
+                    ""type"": ""Button"",
+                    ""id"": ""213e9bd3-8e5a-43d7-9666-82c1d0f33663"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -669,11 +696,44 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""b90b282d-369f-4794-a941-66d0c848f7dd"",
-                    ""path"": ""<Keyboard>/c"",
+                    ""path"": ""<Keyboard>/o"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""CancelUseItem"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""dfb336f2-7369-414c-87d6-53db5dd0a614"",
+                    ""path"": ""<Keyboard>/tab"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""OpenItemWheel"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""2b24e1d0-fb8c-4ab7-9c20-53c402388ae5"",
+                    ""path"": ""<Keyboard>/u"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Detonate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""44d81caa-b7c6-4ea5-b7f2-b8612288961c"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""RevivePlayer"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -701,6 +761,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_Player_Holster = m_Player.FindAction("Holster", throwIfNotFound: true);
         m_Player_UseItem = m_Player.FindAction("UseItem", throwIfNotFound: true);
         m_Player_CancelUseItem = m_Player.FindAction("CancelUseItem", throwIfNotFound: true);
+        m_Player_OpenItemWheel = m_Player.FindAction("OpenItemWheel", throwIfNotFound: true);
+        m_Player_Detonate = m_Player.FindAction("Detonate", throwIfNotFound: true);
+        m_Player_RevivePlayer = m_Player.FindAction("RevivePlayer", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -779,6 +842,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Holster;
     private readonly InputAction m_Player_UseItem;
     private readonly InputAction m_Player_CancelUseItem;
+    private readonly InputAction m_Player_OpenItemWheel;
+    private readonly InputAction m_Player_Detonate;
+    private readonly InputAction m_Player_RevivePlayer;
     public struct PlayerActions
     {
         private @PlayerInputActions m_Wrapper;
@@ -800,6 +866,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         public InputAction @Holster => m_Wrapper.m_Player_Holster;
         public InputAction @UseItem => m_Wrapper.m_Player_UseItem;
         public InputAction @CancelUseItem => m_Wrapper.m_Player_CancelUseItem;
+        public InputAction @OpenItemWheel => m_Wrapper.m_Player_OpenItemWheel;
+        public InputAction @Detonate => m_Wrapper.m_Player_Detonate;
+        public InputAction @RevivePlayer => m_Wrapper.m_Player_RevivePlayer;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -860,6 +929,15 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @CancelUseItem.started += instance.OnCancelUseItem;
             @CancelUseItem.performed += instance.OnCancelUseItem;
             @CancelUseItem.canceled += instance.OnCancelUseItem;
+            @OpenItemWheel.started += instance.OnOpenItemWheel;
+            @OpenItemWheel.performed += instance.OnOpenItemWheel;
+            @OpenItemWheel.canceled += instance.OnOpenItemWheel;
+            @Detonate.started += instance.OnDetonate;
+            @Detonate.performed += instance.OnDetonate;
+            @Detonate.canceled += instance.OnDetonate;
+            @RevivePlayer.started += instance.OnRevivePlayer;
+            @RevivePlayer.performed += instance.OnRevivePlayer;
+            @RevivePlayer.canceled += instance.OnRevivePlayer;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -915,6 +993,15 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @CancelUseItem.started -= instance.OnCancelUseItem;
             @CancelUseItem.performed -= instance.OnCancelUseItem;
             @CancelUseItem.canceled -= instance.OnCancelUseItem;
+            @OpenItemWheel.started -= instance.OnOpenItemWheel;
+            @OpenItemWheel.performed -= instance.OnOpenItemWheel;
+            @OpenItemWheel.canceled -= instance.OnOpenItemWheel;
+            @Detonate.started -= instance.OnDetonate;
+            @Detonate.performed -= instance.OnDetonate;
+            @Detonate.canceled -= instance.OnDetonate;
+            @RevivePlayer.started -= instance.OnRevivePlayer;
+            @RevivePlayer.performed -= instance.OnRevivePlayer;
+            @RevivePlayer.canceled -= instance.OnRevivePlayer;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -951,5 +1038,8 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         void OnHolster(InputAction.CallbackContext context);
         void OnUseItem(InputAction.CallbackContext context);
         void OnCancelUseItem(InputAction.CallbackContext context);
+        void OnOpenItemWheel(InputAction.CallbackContext context);
+        void OnDetonate(InputAction.CallbackContext context);
+        void OnRevivePlayer(InputAction.CallbackContext context);
     }
 }

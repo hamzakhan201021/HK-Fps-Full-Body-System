@@ -12,11 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 605f031169e61448a8e7eba60e243620, type: 3}
   m_Name: MP7WeaponSO
   m_EditorClassIdentifier: 
+  ShakeProfile: {fileID: 11400000, guid: c1dd4c0442ca84bdfba54c195824ddd8, type: 2}
   WeaponName: MP7
   WeaponIconSprite: {fileID: 21300016, guid: 58fac3704cabd467a8e4d05f171ea19d, type: 3}
   CrossHairSprite: {fileID: 21300000, guid: 251db2694de2ac14eb720e94e981a174, type: 3}
   WeaponIconImageHeight: 50
   WeaponIconImageWidth: 150
+  WeaponUIPositionOffset: {x: 0, y: 0, z: 0}
+  WeaponUIRotationOffset: {x: 0, y: 0, z: 0}
   TimeBetweenShot: 0.06
   ReloadingAnimationTime: 4.9
   MaxBulletSpreadAngle: 5
@@ -35,7 +38,7 @@ MonoBehaviour:
   ExtraHeatCoolingThreshold: 25
   ExtraOverheatThreshold: 40
   ClipProjectorPosition: {x: 0.17, y: 0.109, z: 0.391}
-  NewPosition: {x: 0.04, y: -0.1, z: 0.14}
+  NewPosition: {x: -0.14670879, y: -0.2219831, z: -0.13580589}
   NewRotation: {x: 40, y: -70, z: -3}
   BoxCastSize: {x: 0.065, y: 0.31, z: 0.5}
   BoxCastClippedSize: {x: 0.125, y: 0.38, z: 0.57}
@@ -50,5 +53,5 @@ MonoBehaviour:
   CinemachineRecoilImpulse: {x: 0.0003, y: 0.0003, z: 0.02}
   SwayAmount: 1.5
   SwaySmooth: 5
-  WeaponPositionOffset: {x: 0, y: -0.02, z: 0.05}
+  WeaponPositionOffset: {x: 0.1867088, y: 0.1019831, z: 0.3258059}
   SpineConstraintOffsetY: 30

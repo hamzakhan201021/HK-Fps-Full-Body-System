@@ -55,3 +55,15 @@ public enum WeaponType
     pistol,
     knife
 }
+public enum ItemStartUseBehaviour
+{
+    MoveToLeftHand,
+    DisableWeapon,
+}
+public enum BodyPart
+{
+    Head,
+    Body,
+    Arm,
+    Leg,
+}

@@ -8,7 +8,7 @@ public class ReverseAnimationClip : ScriptableWizard
 {
     public string NewFileName = "";
 
-    [MenuItem("Tools/AnimTools/Reverse Animation Clip...")]
+    [MenuItem("Tools/HK Fps/AnimTools/Reverse Animation Clip...")]
     private static void ReverseAnimationClipWizard()
     {
         DisplayWizard<ReverseAnimationClip>("Reverse Animation Clip...", "Reverse");

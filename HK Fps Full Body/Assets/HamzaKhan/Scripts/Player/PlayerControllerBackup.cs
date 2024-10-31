@@ -6,6 +6,24 @@ using UnityEngine;
 public class PlayerControllerBackup : MonoBehaviour
 {
 
+    [Space]
+    public LineRenderer LineRenderer = null;
+    public Transform ReleasePosition = null;
+    [Range(10, 100)] public int LinePoints = 25;
+    [Range(0.01f, 0.25f)] public float TimeBetweenPoints = 0.1f;
+    public float ThrowStrength = 20f;
+    public LayerMask GrenadeCollisionLayerMask;
+    [Space]
+    [Tooltip("Default Loadout")]
+    public List<InventoryItem> Items;
+    private InventoryItem _currentItem;
+    public bool UseGrenadePredictionLine = false;
+    public float DelayBeforeSwitchInputIsFalse = 0.3f;
+    public Transform ItemsParent;
+
+    [SerializeField] private FollowTransformPosAndRot _leftHandFollower;
+
+    // TAGS :  // ITEM SYSTEM
     // main
     #region
     [Space]
@@ -68,14 +86,6 @@ public class PlayerControllerBackup : MonoBehaviour
 
     private LocomotionState _locomotionState;
 
-    public enum LocomotionState
-    {
-        walking,
-        sprinting,
-        crouching,
-        proning,
-    }
-
     private bool _hasFinishedChangingRadius = true;
 
     private Transform _thisTransform;
@@ -92,6 +102,8 @@ public class PlayerControllerBackup : MonoBehaviour
     [SerializeField] private string _turnParamName = "Turn";
 
     [SerializeField] private float _turningAmountMulti = 0.0015f;
+    [SerializeField] private float _turningAnimDampTime = 0.1f;
+    [SerializeField] private float _animLerpingSpeed = 10f;
 
     [SerializeField] private string _inAirParamName = "InAir";
     [SerializeField] private string _standingValueParamName = "StandingValue";
@@ -99,7 +111,10 @@ public class PlayerControllerBackup : MonoBehaviour
     [SerializeField] private string _weaponTypeParamName = "WeaponType";
     [SerializeField] private string _nearGroundParamName = "NearGround";
     [SerializeField] private string _jumpParamName = "Jump";
-    [SerializeField] private float _animLerpingSpeed = 10f;
+    [Space(5)]
+    [SerializeField] private string _switchOrHolsterTriggerName = "PerformSwitchOrHolster";
+    [SerializeField] private string _weaponSwitchTypeName = "WeaponSwitchType";
+    [SerializeField] private string _upperBodyLayerName = "UpperBody";
 
     private int _moveZParamNameHash;
     private int _moveXParamNameHash;
@@ -155,12 +170,6 @@ public class PlayerControllerBackup : MonoBehaviour
     private AirState _airState = AirState.grounded;
     private AirState _previousAirState = AirState.grounded;
 
-    public enum AirState
-    {
-        grounded,
-        inAir,
-    }
-
     #endregion
 
     // look
@@ -177,10 +186,11 @@ public class PlayerControllerBackup : MonoBehaviour
 
     [SerializeField] private float _lookMaxChangeSpeed = 40f;
     [SerializeField] private float _rotatingSlerpSpeed = 20f;
+    [Space(5)]
+    [SerializeField] private List<MultiRotationConstraintData> _multiRotationConstraints;
 
     private Vector3 _spineTargetRotation = Vector3.zero;
     private Vector3 _spineTargetRotationZ = Vector3.zero;
-    private Vector3 _spineConstraintOffset = Vector3.zero;
 
     private float _lookUpLimit;
     private float _lookDownLimit;
@@ -196,6 +206,9 @@ public class PlayerControllerBackup : MonoBehaviour
     [Space]
     [Header("Camera")]
     [SerializeField] private Transform _cameraHolder;
+    [SerializeField] private Transform _headTransform;
+    [Space(3)]
+    [SerializeField] private Vector3 _cameraHolderDefaultOffset = new Vector3(0, 0, 0.25f);
 
     // private var
     private Vector3 _cameraTargetPosition;
@@ -209,10 +222,7 @@ public class PlayerControllerBackup : MonoBehaviour
     #region
     [Space]
     [Header("Weapon")]
-    [SerializeField] private Transform _rifleHolder;
-    [SerializeField] private Transform _pistolHolder;
-    // CHANGED
-    //[SerializeField] private float _leftHandIKSmoothWeightSpeed = 20f;
+    [SerializeField] private Transform _gunHolder;
 
     [Header("Hands Transform Constraints")]
     [SerializeField] private ConstraintsWeightModifier _iKBasedFingersWeightModifier;
@@ -224,23 +234,12 @@ public class PlayerControllerBackup : MonoBehaviour
     // aiming
     private AimState _aimState = AimState.normal;
 
-    public enum AimState
-    {
-        normal,
-        aiming,
-    }
-
-    // CHANGED
-    //// reloading
-    //[SerializeField] private TwoBoneIKConstraint _leftHandIK;
-
     // weapon
     private WeaponBase _currentWeapon;
 
     // Clip prevention
     [Space]
     [Header("Clip Prevention Settings")]
-    [SerializeField] private Transform _gunHolder;
     [SerializeField] private Transform _clipProjectorPos;
     [SerializeField] private Transform _clipProjector;
     [SerializeField] private Transform _clipVisual;
@@ -250,26 +249,16 @@ public class PlayerControllerBackup : MonoBehaviour
 
     [SerializeField] private LayerMask _clipCheckMask;
 
-    [SerializeField] private List<MultiRotationConstraint> _spineConstraints;
-
     private Vector3 _spineRotationOffset = Vector3.zero;
     private Vector3 _initialPosition;
 
     private WeaponClippedState _weaponClippedState = WeaponClippedState.normal;
-
-    public enum WeaponClippedState
-    {
-        clipped,
-        normal,
-    }
 
     private float _lerpPos;
 
     private bool _detectionClipped = false;
 
     #endregion
-
-    // CHANGED
 
     // Weapon Switching
     #region
@@ -279,26 +268,54 @@ public class PlayerControllerBackup : MonoBehaviour
     [SerializeField] private WeaponBase _secondaryWeapon;
     [SerializeField] private WeaponBase _sidearmWeapon;
     [SerializeField] private WeaponBase _meleeWeapon;
-    [Space]
-    //[SerializeField] private Slot _rifleSlotOne;
-    //[SerializeField] private Slot _rifleSlotTwo;
-    //[SerializeField] private Slot _pistolSlot;
-    //[SerializeField] private Slot _meleeSlot;
-    //[Space]
-    //[SerializeField] private Slot _gunHolderSlot;
+    [Space(5)]
+    [SerializeField] private Slot _rifleSlotOne;
+    [SerializeField] private Slot _rifleSlotTwo;
+    [SerializeField] private Slot _pistolSlot;
+    [SerializeField] private Slot _meleeSlot;
+    [Space(2)]
+    [SerializeField] private Slot _gunHolderSlot;
+    [Space(2)]
     [SerializeField] private FollowTransformPosAndRot _rightHandFollower;
-    [Space]
+    [Space(2)]
     [SerializeField] private ConstraintsWeightModifier _handsIKWeightModifier;
-    [Space]
-    /// use hash id instead... in vid
-    [SerializeField] private string _switchOrHolsterTriggerName = "PerformSwitchOrHolster";
-    [SerializeField] private string _weaponSwitchTypeName = "WeaponSwitchType";
+    [Space(5)]
+    [SerializeField] private float _switchToRifleInputDelay = 0.8f;
+    [SerializeField] private float _switchToPistolInputDelay = 0.4f;
+    [Space(5)]
+    [SerializeField] private int _holsterPistolOrKnifeID = 0;
+    [SerializeField] private int _holsterRifleID = 1;
+    [SerializeField] private int _switchBetweenPistolOrKnifeID = 2;
+    [SerializeField] private int _switchBetweenRifleID = 3;
+    [SerializeField] private int _switchFromKnifeOrPistolToRifleID = 4;
+    [SerializeField] private int _switchFromRifleToKnifeID = 5;
+    [SerializeField] private int _switchFromRifleToPistolID = 6;
+    [SerializeField] private int _unHolsterPistolOrKnifeID = 7;
+    [SerializeField] private int _unHolsterRifleID = 8;
+    [SerializeField] private int _swapWeaponID = 9;
+    [Space(5)]
+    [SerializeField] private bool canHolster = true;
+    [Space(5)]
+    [Header("Swapping")]
+    [SerializeField] private float _dropWeaponForce = 6;
+    [SerializeField] private float _pickNewWeaponSmoothTime = 0.05f;
 
-    // CHANGED
-    [SerializeField] private string _upperBodyLayerName = "UpperBody";
+    private WaitForSeconds _switchToRifleInputWaitForSeconds;
+    private WaitForSeconds _switchToPistolInputWaitForSeconds;
+
+    private float _targetUpperBodyLayerWeight = 1f;
+
+    private int _switchOrHolsterTriggerNameHash;
+    private int _weaponSwitchTypeNameHash;
+    private int _upperBodyLayerIndex;
+
+    private int animToPlayID = 0;
+
+    private bool _isPerformingSwitch = false;
+    private bool _switchInputPerformed = false;
+    private bool _holstered = false;
+
     #endregion
-
-    // CHANGED
 
     // Leaning/Peeking
     #region
@@ -319,6 +336,8 @@ public class PlayerControllerBackup : MonoBehaviour
     [SerializeField] private float _interactMaxDistance = 1;
 
     [SerializeField] private LayerMask _interactableLayerMask;
+
+    private WeaponBase _interactedNewWeapon = null;
 
     private IInteractable _detectedInteractable;
 
@@ -343,14 +362,19 @@ public class PlayerControllerBackup : MonoBehaviour
         _thisTransform = transform;
 
         // CurrentWeaponRef
-        // CHANGED
-        //_currentWeapon = GetComponentInChildren<WeaponBase>();
         _currentWeapon = _primaryWeapon;
 
+        // CHANGES (
+        // ITEM SYSTEM
+        _currentItem = Items[0];
+        _playerUI.SetActiveItemWheel(false);
+        _playerUI.SetActiveCancelPromptUI(false);
+        _playerUI.UpdateItemWheel(Items, _currentItem);
+        // CHANGES )
+
         // Set the isCurrentWeapon bool.
-        //_currentWeapon.SetCurrentWeapon(true);
-        //_currentWeapon.SetControllerReference(this);
         //_currentWeapon.SetWeaponData(this, true);
+        UpdateWeaponUI();
     }
 
     void Start()
@@ -382,13 +406,13 @@ public class PlayerControllerBackup : MonoBehaviour
         _nearGroundParamNameHash = Animator.StringToHash(_nearGroundParamName);
         _jumpParamNameHash = Animator.StringToHash(_jumpParamName);
 
+        _switchOrHolsterTriggerNameHash = Animator.StringToHash(_switchOrHolsterTriggerName);
+        _weaponSwitchTypeNameHash = Animator.StringToHash(_weaponSwitchTypeName);
 
+        _upperBodyLayerIndex = _playerAnimator.GetLayerIndex(_upperBodyLayerName);
 
-
-        // CHANGED
         _switchToRifleInputWaitForSeconds = new WaitForSeconds(_switchToRifleInputDelay);
         _switchToPistolInputWaitForSeconds = new WaitForSeconds(_switchToPistolInputDelay);
-        // CHANGED
     }
 
     // Update is called once per frame
@@ -401,7 +425,8 @@ public class PlayerControllerBackup : MonoBehaviour
         Look();
         HandleShooting();
         HandleAiming();
-
+        HandleWeaponSwitching();
+        HandleItems();
         if (Time.frameCount % detectInteractableInterval == 0) DetectInteractable();
 
         InteractInputCheck();
@@ -410,19 +435,9 @@ public class PlayerControllerBackup : MonoBehaviour
         if (Time.frameCount % detectWeaponClipInterval == 0) DetectWeaponClip();
 
         UpdateClippedValues();
-
-
-
-        // CHANGED
-        HandleWeaponSwitching();
-        // CHANGED
-
-
-
-        HandlePlayerUI();
     }
 
-    private void HandlePlayerUI()
+    private void UpdateWeaponUI()
     {
         // Update Weapon UI.
         _playerUI.SetCurrentWeaponUI(_currentWeapon);
@@ -440,12 +455,19 @@ public class PlayerControllerBackup : MonoBehaviour
     private void SetCameraPositionAndRotation()
     {
         // Check if clipped
-        if (IsClipped()) _cameraTargetPosition = _currentWeapon.WeaponData.CameraClippedPosition;
-        else if (IsAiming()) _cameraTargetPosition = _currentWeapon.WeaponData.CameraAimingPosition;
-        else _cameraTargetPosition = _currentWeapon.WeaponData.CameraNormalPosition;
+        if (!_holstered)
+        {
+            if (IsClipped()) _cameraTargetPosition = _currentWeapon.WeaponData.CameraClippedPosition;
+            else if (IsAiming()) _cameraTargetPosition = _currentWeapon.WeaponData.CameraAimingPosition;
+            else _cameraTargetPosition = _currentWeapon.WeaponData.CameraNormalPosition;
+        }
+        else
+        {
+            _cameraTargetPosition = _cameraHolder.parent.InverseTransformPoint(_headTransform.position) + _cameraHolderDefaultOffset;
+        }
 
         // Add z off to camera target rotation.
-        _cameraTargetRotation = Quaternion.Euler(0f, 0f, -_centerSpinePos.localRotation.eulerAngles.z);
+        _cameraTargetRotation = Quaternion.Euler(_holstered ? _xRotation : 0f, 0f, -_centerSpinePos.localRotation.eulerAngles.z);
 
         _cameraHolder.SetLocalPositionAndRotation(Vector3.Lerp(_cameraHolder.localPosition, _cameraTargetPosition, _smoothCamToTargetSpeed * Time.deltaTime), _cameraTargetRotation);
     }
@@ -742,10 +764,13 @@ public class PlayerControllerBackup : MonoBehaviour
         _playerAnimator.SetFloat(_inAirParamNameHash, _inAirValue);
 
         // Turn
-        _playerAnimator.SetFloat(_turnParamNameHash, Input.Player.Look.ReadValue<Vector2>().x * _sensX * _turningAmountMulti, 0.1f, Time.deltaTime);
+        _playerAnimator.SetFloat(_turnParamNameHash, Input.Player.Look.ReadValue<Vector2>().x * _sensX * _turningAmountMulti, _turningAnimDampTime, Time.deltaTime);
 
         // Weapon floats
         _playerAnimator.SetFloat(_weaponTypeParamNameHash, _weaponTypeValue);
+
+        // Upper Body Layer Weight
+        _playerAnimator.SetLayerWeight(_upperBodyLayerIndex, Mathf.Lerp(_playerAnimator.GetLayerWeight(_upperBodyLayerIndex), _targetUpperBodyLayerWeight, _animLerpingSpeed * Time.deltaTime));
     }
 
     private void Look()
@@ -781,7 +806,7 @@ public class PlayerControllerBackup : MonoBehaviour
         _spineTargetRotationZ.z = _spineTargetRotation.z;
 
         // Check if we are reloading.
-        if (_currentWeapon._isReloading)
+        if (_currentWeapon._isReloading || _holstered)
         {
             // Set Spine Followers Rotation Accordingly.
             SetSpineFollowersRotation(_spineTargetRotationZ, _spineTargetRotation, _rotatingSlerpSpeed);
@@ -859,12 +884,6 @@ public class PlayerControllerBackup : MonoBehaviour
     // Handle shooting
     private void HandleShooting()
     {
-        // CHANGED Added Simpler Bool FUNC
-        //if (Input.Player.Shoot.IsPressed() && !IsClipped())
-        //{
-        //    // Try Shooting.
-        //    Shoot();
-        //}
         if (Input.Player.Shoot.IsPressed() && CanShoot())
         {
             // Try Shooting.
@@ -874,15 +893,15 @@ public class PlayerControllerBackup : MonoBehaviour
 
     private bool CanShoot()
     {
-        return !IsClipped() && !_switchingInputPerformed && !_holstered;
+        return !IsClipped() && !_switchInputPerformed && !_holstered;
     }
 
     // Shoot!
     private void Shoot()
     {
-        bool didShoot = _currentWeapon.Shoot();
+        //bool didShoot = _currentWeapon.Shoot();
 
-        if (didShoot == false) return;
+        //if (didShoot == false) return;
 
         // Bump Rotation.
         _xRotation -= _currentWeapon.WeaponData.ShotBumpRotationAmount;
@@ -915,41 +934,15 @@ public class PlayerControllerBackup : MonoBehaviour
     private void HandleAiming()
     {
         // check for input aim.
-        // CHANGED !SPRINT CHECK.
-        if (Input.Player.Aim.triggered && !IsSprinting())
+        if (Input.Player.Aim.triggered)
         {
-            // CHANGED
-            //// toggle is aiming.
-            //switch (_aimState)
-            //{
-            //    case AimState.aiming:
-            //        // CHANGED
-            //        //_aimState = AimState.normal;
-
-            //        //_currentWeapon.InvokeOnAimExit();
-            //        ChangeAimState(true);
-
-            //        break;
-            //    case AimState.normal:
-            //        // CHANGED
-            //        //_aimState = AimState.aiming;
-
-            //        //_currentWeapon.InvokeOnAimEnter();
-            //        ChangeAimState(false);
-
-            //        break;
-            //}
-
+            // toggle is aim.
             ToggleAimState();
-
-            //_playerUI.SetCrossHairShow(_aimState != AimState.aiming);
         }
 
-        // CHANGED
         if (IsSprinting() && IsAiming()) _aimState = AimState.normal;
     }
 
-    // CHANGED
     private void ToggleAimState()
     {
         _aimState = _aimState == AimState.normal ? AimState.aiming : AimState.normal;
@@ -981,10 +974,6 @@ public class PlayerControllerBackup : MonoBehaviour
             // Try Reload.
             TryReload();
         }
-
-        // Left Hand IK
-        // CHANGED
-        //_leftHandIK.weight = Mathf.Lerp(_leftHandIK.weight, 1f, Time.deltaTime * _leftHandIKSmoothWeightSpeed);
     }
 
     /// <summary>
@@ -993,11 +982,6 @@ public class PlayerControllerBackup : MonoBehaviour
     /// </summary>
     private void TryReload()
     {
-        // CHANGED Added Simpler Bool FUNC
-        //if (!IsClipped() && !_isInInteractionRange)
-        //{
-        //    _currentWeapon.StartReloading();
-        //}
         if (CanReload())
         {
             _currentWeapon.StartReloading();
@@ -1006,7 +990,7 @@ public class PlayerControllerBackup : MonoBehaviour
 
     private bool CanReload()
     {
-        return !IsClipped() && !_isInInteractionRange && !_switchingInputPerformed && !_holstered;
+        return !IsClipped() && !_isInInteractionRange && !_switchInputPerformed && !_holstered;
     }
 
     private void DetectWeaponClip()
@@ -1020,9 +1004,6 @@ public class PlayerControllerBackup : MonoBehaviour
         _detectionClipped = IsWeaponClipped();
 
         _weaponClippedState = _detectionClipped ? WeaponClippedState.clipped : WeaponClippedState.normal;
-
-        // CHANGED
-        //_currentWeapon.transform.localPosition = _currentWeapon.WeaponData.WeaponPositionOffset;
     }
 
     private void UpdateClippedValues()
@@ -1034,6 +1015,8 @@ public class PlayerControllerBackup : MonoBehaviour
 
     private bool IsWeaponClipped()
     {
+        if (_holstered) return false;
+
         bool isClipped = Physics.CheckBox(_clipProjector.position,
                                           _currentWeapon.WeaponData.BoxCastSize / 2f,
                                           _clipProjector.rotation,
@@ -1056,59 +1039,60 @@ public class PlayerControllerBackup : MonoBehaviour
 
         float targetOffsetY = clipped ? 0f : _currentWeapon.WeaponData.SpineConstraintOffsetY;
 
-        _spineRotationOffset.y = Mathf.Lerp(_spineConstraints[0].data.offset.y, targetOffsetY, _spineOffsetChangeSpeed * Time.deltaTime);
+        // CHANGES , ADDED OR OPERATOR FOR THE GRENADES & SWITCHING
+        targetOffsetY = (_holstered || _isPerformingSwitch) ? 0f : targetOffsetY;
 
-        for (int i = 0; i < _spineConstraints.Count; i++)
+        // CHANGES LOOK AT THE NEXT CHUNK
+        //_spineRotationOffset.y = Mathf.Lerp(_multiRotationConstraints[0].MultiRotationConstraint.data.offset.y, targetOffsetY, _spineOffsetChangeSpeed * Time.deltaTime);
+
+        float targetWeight = _holstered ? 0 : 1;
+
+        for (int i = 0; i < _multiRotationConstraints.Count; i++)
         {
-            _spineConstraints[i].data.offset = _spineRotationOffset;
+            // CHANGES FIXED PROBLEM WITH (FIRST CONSTRAINTS SETTINGS ONLY)(BUG)
+            //_multiRotationConstraints[i].MultiRotationConstraint.data.offset = _multiRotationConstraints[i].ApplyWeaponRotationOffsetY ? _spineRotationOffset : Vector3.zero;
+
+            //float realWeight = Mathf.Lerp(_multiRotationConstraints[i].MultiRotationConstraint.weight, targetWeight * _multiRotationConstraints[i].WeightScale, _spineOffsetChangeSpeed * Time.deltaTime);
+
+            //_multiRotationConstraints[i].MultiRotationConstraint.weight = realWeight;
+
+            Vector3 targetConstraintOffset = Vector3.zero;
+            targetConstraintOffset.y = Mathf.Lerp(_multiRotationConstraints[i].MultiRotationConstraint.data.offset.y, targetOffsetY, _spineOffsetChangeSpeed * Time.deltaTime);
+
+            _multiRotationConstraints[i].MultiRotationConstraint.data.offset = _multiRotationConstraints[i].ApplyWeaponRotationOffsetY ? targetConstraintOffset : Vector3.zero;
+
+            float realWeight = Mathf.Lerp(_multiRotationConstraints[i].MultiRotationConstraint.weight, targetWeight * _multiRotationConstraints[i].WeightScale, _spineOffsetChangeSpeed * Time.deltaTime);
+
+            _multiRotationConstraints[i].MultiRotationConstraint.weight = realWeight;
         }
     }
 
     private void UpdateConstraintsWeights()
     {
-        // CHANGED
-        //float ikWeight = _currentWeapon.HandsConstraintType == HandsConstraintType.IKBasedFingers ? 1f : 0f;
-
-        //float rotationWeight = 1f - ikWeight;
-        //float ikLerpSpeed = 10f;
-
-        //_iKBasedFingersWeightModifier.SetWeight(Mathf.Lerp(_iKBasedFingersWeightModifier.GetWeight(), ikWeight, ikLerpSpeed * Time.deltaTime));
-        //_rotationConstraitBasedFingersWeightModifier.SetWeight(Mathf.Lerp(_rotationConstraitBasedFingersWeightModifier.GetWeight(),
-        //    rotationWeight, ikLerpSpeed * Time.deltaTime));
-
         float ikWeight = _currentWeapon.HandsConstraintType == HandsConstraintType.IKBasedFingers ? 1f : 0f;
-
         float rotationWeight = 1f - ikWeight;
         float ikLerpSpeed = 20f;
 
+        float handsIKWeight;
+
         if (_isPerformingSwitch || _holstered)
         {
-            _iKBasedFingersWeightModifier.SetWeight(Mathf.Lerp(_iKBasedFingersWeightModifier.GetWeight(), 0, ikLerpSpeed * Time.deltaTime));
-            _rotationConstraitBasedFingersWeightModifier.SetWeight(Mathf.Lerp(_rotationConstraitBasedFingersWeightModifier.GetWeight(),
-                0, ikLerpSpeed * Time.deltaTime));
-
-            float targetWeight = Mathf.Lerp(_handsIKWeightModifier.GetWeight(), 0, ikLerpSpeed * Time.deltaTime);
-
-            _handsIKWeightModifier.SetWeight(targetWeight);
+            ikWeight = 0;
+            rotationWeight = 0;
+            handsIKWeight = 0;
         }
         else
         {
-            _iKBasedFingersWeightModifier.SetWeight(Mathf.Lerp(_iKBasedFingersWeightModifier.GetWeight(), ikWeight, ikLerpSpeed * Time.deltaTime));
-            _rotationConstraitBasedFingersWeightModifier.SetWeight(Mathf.Lerp(_rotationConstraitBasedFingersWeightModifier.GetWeight(),
-                rotationWeight, ikLerpSpeed * Time.deltaTime));
-
-            float targetWeight = Mathf.Lerp(_handsIKWeightModifier.GetWeight(), 1, ikLerpSpeed * Time.deltaTime);
-
-            _handsIKWeightModifier.SetWeight(targetWeight);
+            handsIKWeight = 1;
         }
 
-        // CHANGED
-        int upperBodyLayer = _playerAnimator.GetLayerIndex(_upperBodyLayerName);
+        _iKBasedFingersWeightModifier.SetWeight(Mathf.Lerp(_iKBasedFingersWeightModifier.GetWeight(), ikWeight, ikLerpSpeed * Time.deltaTime));
+        _rotationConstraitBasedFingersWeightModifier.SetWeight(Mathf.Lerp(_rotationConstraitBasedFingersWeightModifier.GetWeight(),
+            rotationWeight, ikLerpSpeed * Time.deltaTime));
 
-        float upperBodyWeight = Mathf.Lerp(_playerAnimator.GetLayerWeight(upperBodyLayer), _holstered ? 0 : 1, ikLerpSpeed * Time.deltaTime);
+        _handsIKWeightModifier.SetWeight(Mathf.Lerp(_handsIKWeightModifier.GetWeight(), handsIKWeight, ikLerpSpeed * Time.deltaTime));
 
-        _playerAnimator.SetLayerWeight(upperBodyLayer, upperBodyWeight);
-        // CHANGED
+        _targetUpperBodyLayerWeight = _holstered ? 0 : 1;
     }
 
     private void UpdateWeaponTransform()
@@ -1116,42 +1100,12 @@ public class PlayerControllerBackup : MonoBehaviour
         _gunHolder.SetLocalPositionAndRotation(Vector3.Lerp(_initialPosition, _currentWeapon.WeaponData.NewPosition, _lerpPos),
             Quaternion.Lerp(Quaternion.identity, Quaternion.Euler(_currentWeapon.WeaponData.NewRotation), _lerpPos));
 
-        // CHANGED
         float offsetPositioningSpeed = 20;
-        if (!_isPerformingSwitch) _currentWeapon.transform.localPosition = Vector3.Lerp(_currentWeapon.transform.localPosition,
-            _currentWeapon.WeaponData.WeaponPositionOffset, Time.deltaTime * offsetPositioningSpeed);
+        if (!_isPerformingSwitch && !_holstered) _currentWeapon.transform.localPosition = Vector3.Lerp(_currentWeapon.transform.localPosition,
+            _currentWeapon.WeaponData.WeaponPositionOffset, offsetPositioningSpeed * Time.deltaTime);
     }
 
-    // CHANGED
-
-    #region Var
-
-    private WaitForSeconds _switchToRifleInputWaitForSeconds;
-    private WaitForSeconds _switchToPistolInputWaitForSeconds;
-
-    [Space]
-    [SerializeField] private float _switchToRifleInputDelay = 0.6f;
-    [SerializeField] private float _switchToPistolInputDelay = 0.3f;
-    [Space]
-    [SerializeField] private int _holsterPistolOrKnifeID = 0;
-    [SerializeField] private int _holsterRifleID = 1;
-    [SerializeField] private int _switchBetweenPistolOrKnifeID = 2;
-    [SerializeField] private int _switchBetweenRifleID = 3;
-    [SerializeField] private int _switchFromKnifeOrPistolToRifleID = 4;
-    [SerializeField] private int _switchFromRifleToKnifeID = 5;
-    [SerializeField] private int _switchFromRifleToPistolID = 6;
-    [SerializeField] private int _unHolsterPistolOrKnifeID = 7;
-    [SerializeField] private int _unHolsterRifleID = 8;
-
-    private bool _isPerformingSwitch = false;
-    private bool _switchingInputPerformed = false;
-    private bool _holstered = false;
-
-    private int animToPlayID = 0;
-
-    #endregion
-
-    #region General
+    #region Weapon Switching
 
     private void HandleWeaponSwitching()
     {
@@ -1162,7 +1116,7 @@ public class PlayerControllerBackup : MonoBehaviour
 
             if (Input.Player.SwitchToPistol.triggered) StartCoroutine(TrySwitchFromCurrentToPistolDelay());
 
-            if (Input.Player.SwitchToKnife.triggered) TrySwitchFromCurrentToKnife();
+            if (Input.Player.SwitchToKnife.triggered && _currentWeapon.WeaponData.WeaponType != WeaponType.knife) TrySwitchFromCurrentToKnife();
         }
 
         if (CanPerformHolstering())
@@ -1173,17 +1127,14 @@ public class PlayerControllerBackup : MonoBehaviour
 
     private bool CanPerformSwitching()
     {
-        return !_isPerformingSwitch && !_currentWeapon._isReloading;
+        return !_isPerformingSwitch && !_currentWeapon._isReloading && _currentWeapon._gunShotTimer <= 0 && !_holstered;
     }
 
     private bool CanPerformHolstering()
     {
-        return !_switchingInputPerformed && !_currentWeapon._isReloading;
+        return !_switchInputPerformed && !_currentWeapon._isReloading && _currentWeapon._gunShotTimer <= 0 && canHolster;
     }
 
-    #endregion
-
-    #region Try Switch
     private void TrySwitchFromCurrentToKnife()
     {
         UpdateSwitchingState(true);
@@ -1201,18 +1152,14 @@ public class PlayerControllerBackup : MonoBehaviour
             case WeaponType.pistol:
                 animToPlayID = _switchBetweenPistolOrKnifeID;
                 break;
-            case WeaponType.knife:
-                UpdateSwitchingState(false);
-                return;
         }
 
         PerformWeaponSwitchAnimation();
     }
     private void TryHolsterOrUnHolsterCurrentWeapon()
     {
-        // Try to holster the current weapon.
-        UpdateSwitchingInputPerformed(true);
         UpdateSwitchingState(true);
+        UpdateSwitchingInputPerformed(true);
 
         if (!_holstered)
         {
@@ -1241,9 +1188,7 @@ public class PlayerControllerBackup : MonoBehaviour
 
         PerformWeaponSwitchAnimation();
     }
-    #endregion
 
-    #region Switch Delayed Functions
     private IEnumerator TrySwitchFromCurrentToRifleDelay()
     {
         UpdateSwitchingInputPerformed(true);
@@ -1251,6 +1196,7 @@ public class PlayerControllerBackup : MonoBehaviour
 
         if (!_isPerformingSwitch) SwitchFromCurrentToRifle();
     }
+
     private IEnumerator TrySwitchFromCurrentToPistolDelay()
     {
         UpdateSwitchingInputPerformed(true);
@@ -1281,6 +1227,7 @@ public class PlayerControllerBackup : MonoBehaviour
 
         PerformWeaponSwitchAnimation();
     }
+
     private void SwitchFromCurrentToPistol()
     {
         UpdateSwitchingState(true);
@@ -1293,9 +1240,6 @@ public class PlayerControllerBackup : MonoBehaviour
             case WeaponType.rifle:
                 animToPlayID = _switchFromRifleToPistolID;
                 break;
-            case WeaponType.pistol:
-                UpdateSwitchingState(false);
-                return;
             case WeaponType.knife:
                 animToPlayID = _switchBetweenPistolOrKnifeID;
                 break;
@@ -1303,264 +1247,56 @@ public class PlayerControllerBackup : MonoBehaviour
 
         PerformWeaponSwitchAnimation();
     }
-    #endregion
 
-    #region Animation Events
-    public void OnWeaponSwitchComplete()
+    public void MoveWeaponToRightHandSlot(bool smooth = true)
     {
-        UpdateSwitchingState(false);
-        UpdateSwitchingInputPerformed(false);
-        //_currentWeapon.SetWeaponData(this, true);
-    }
-    public void SwitchBetweenRifle(int step)
-    {
-        switch (step)
-        {
-            case 1:
-                //_currentWeapon.SetWeaponData(this, false);
-
-                //if (!_rifleSlotOne.HasObjectInSlot().hasObject)
-                //{
-                //    _rifleSlotOne.SnapToSocket(_currentWeapon.transform);
-                //    _currentWeapon = _rifleSlotTwo.HasObjectInSlot().objectTransforms[0].GetComponent<WeaponBase>();
-                //}
-                //else if (!_rifleSlotTwo.HasObjectInSlot().hasObject)
-                //{
-                //    _rifleSlotTwo.SnapToSocket(_currentWeapon.transform);
-                //    _currentWeapon = _rifleSlotOne.HasObjectInSlot().objectTransforms[0].GetComponent<WeaponBase>();
-                //}
-
-                //_currentWeapon.SetWeaponData(this, true);
-
-                break;
-            case 2:
-
-                MoveWeaponToRightHandSlot();
-                SetAllIKFollowersTargetToTargets(_currentWeapon);
-                break;
-            case 3:
-                //_gunHolderSlot.SnapToSocket(_currentWeapon.transform);
-                break;
-        }
-    }
-    public void SwitchBetweenPistolOrKnife(int step)
-    {
-        switch (step)
-        {
-            case 1:
-
-                //_currentWeapon.SetWeaponData(this, false);
-
-                //if (!_pistolSlot.HasObjectInSlot().hasObject)
-                //{
-                //    _pistolSlot.SnapToSocket(_currentWeapon.transform);
-                //    _currentWeapon = _meleeSlot.HasObjectInSlot().objectTransforms[0].GetComponent<WeaponBase>();
-                //}
-                //else if (!_meleeSlot.HasObjectInSlot().hasObject)
-                //{
-                //    _meleeSlot.SnapToSocket(_currentWeapon.transform);
-                //    _currentWeapon = _pistolSlot.HasObjectInSlot().objectTransforms[0].GetComponent<WeaponBase>();
-                //}
-
-                //_currentWeapon.SetWeaponData(this, true);
-
-                break;
-            case 2:
-
-                MoveWeaponToRightHandSlot();
-                SetAllIKFollowersTargetToTargets(_currentWeapon);
-
-                break;
-            case 3:
-
-                //_gunHolderSlot.SnapToSocket(_currentWeapon.transform);
-
-                break;
-        }
-    }
-    public void SwitchFromPistolOrKnifeToRifle(int step)
-    {
-        switch (step)
-        {
-            case 1:
-
-                //_currentWeapon.SetWeaponData(this, false);
-
-                switch (_currentWeapon.WeaponData.WeaponType)
-                {
-                    case WeaponType.pistol:
-                        //_pistolSlot.SnapToSocket(_currentWeapon.transform);
-                        break;
-                    case WeaponType.knife:
-                        //_meleeSlot.SnapToSocket(_currentWeapon.transform);
-                        break;
-                }
-
-                //_currentWeapon = _rifleSlotTwo.HasObjectInSlot().objectTransforms[0].GetComponent<WeaponBase>();
-
-                //_currentWeapon.SetWeaponData(this, true);
-
-                break;
-            case 2:
-
-                MoveWeaponToRightHandSlot();
-                SetAllIKFollowersTargetToTargets(_currentWeapon);
-
-                break;
-            case 3:
-
-                //_gunHolderSlot.SnapToSocket(_currentWeapon.transform);
-
-                break;
-        }
-    }
-    public void SwitchFromRifleToPistol(int step)
-    {
-        switch (step)
-        {
-            case 1:
-                //_currentWeapon.SetWeaponData(this, false);
-
-                //if (!_rifleSlotOne.HasObjectInSlot().hasObject) _rifleSlotOne.SnapToSocket(_currentWeapon.transform);
-                //else if (!_rifleSlotTwo.HasObjectInSlot().hasObject) _rifleSlotTwo.SnapToSocket(_currentWeapon.transform);
-
-                //_currentWeapon = _pistolSlot.HasObjectInSlot().objectTransforms[0].GetComponent<WeaponBase>();
-
-                //_currentWeapon.SetWeaponData(this, true);
-
-                break;
-            case 2:
-
-                MoveWeaponToRightHandSlot();
-                SetAllIKFollowersTargetToTargets(_currentWeapon);
-
-                break;
-            case 3:
-                //_gunHolderSlot.SnapToSocket(_currentWeapon.transform);
-                break;
-        }
-    }
-    public void SwitchFromRifleToKnife(int step)
-    {
-        switch (step)
-        {
-            case 1:
-                //_currentWeapon.SetWeaponData(this, false);
-
-                //if (!_rifleSlotOne.HasObjectInSlot().hasObject) _rifleSlotOne.SnapToSocket(_currentWeapon.transform);
-                //else if (!_rifleSlotTwo.HasObjectInSlot().hasObject) _rifleSlotTwo.SnapToSocket(_currentWeapon.transform);
-
-                //_currentWeapon = _meleeSlot.HasObjectInSlot().objectTransforms[0].GetComponent<WeaponBase>();
-
-                //_currentWeapon.SetWeaponData(this, true);
-
-                break;
-            case 2:
-
-                MoveWeaponToRightHandSlot();
-                SetAllIKFollowersTargetToTargets(_currentWeapon);
-
-                break;
-            case 3:
-                //_gunHolderSlot.SnapToSocket(_currentWeapon.transform);
-                break;
-        }
-    }
-    public void Holster()
-    {
-        _holstered = true;
-        //_currentWeapon.SetWeaponData(this, false);
-
-        switch (_currentWeapon.WeaponData.WeaponType)
-        {
-            case WeaponType.rifle:
-                //if (!_rifleSlotOne.HasObjectInSlot().hasObject) _rifleSlotOne.SnapToSocket(_currentWeapon.transform);
-                //else if (!_rifleSlotTwo.HasObjectInSlot().hasObject) _rifleSlotTwo.SnapToSocket(_currentWeapon.transform);
-                break;
-            case WeaponType.pistol:
-                //_pistolSlot.SnapToSocket(_currentWeapon.transform);
-                break;
-            case WeaponType.knife:
-                //_meleeSlot.SnapToSocket(_currentWeapon.transform);
-                break;
-        }
-    }
-    public void UnHolster(int step)
-    {
-        switch (step)
-        {
-            case 1:
-                MoveWeaponToRightHandSlot();
-                break;
-            case 2:
-                //_gunHolderSlot.SnapToSocket(_currentWeapon.transform);
-                break;
-        }
-    }
-    #endregion
-
-    // //
-    #region Useful Functions
-    private void MoveWeaponToRightHandSlot(bool smooth = true)
-    {
-        Quaternion prevWeaponRotation = _currentWeapon.transform.rotation;
+        Quaternion previousWeaponRotation = _currentWeapon.transform.rotation;
         _rightHandFollower.transform.rotation = Quaternion.identity;
         _currentWeapon.transform.rotation = Quaternion.identity;
 
-        Vector3 _offset = (_currentWeapon.HandsConstraintType == HandsConstraintType.IKBasedFingers ?
+        Vector3 offset = (_currentWeapon.HandsConstraintType == HandsConstraintType.IKBasedFingers ?
             _currentWeapon.HandsIKTargets.RightHandIKTransform.position :
             _currentWeapon.HandsRotationConstraintTransforms.RightHandIKTransform.position) -
             _currentWeapon.transform.position;
 
-        _currentWeapon.transform.rotation = prevWeaponRotation;
+        _currentWeapon.transform.rotation = previousWeaponRotation;
 
-        if (_currentWeapon.HandsConstraintType == HandsConstraintType.IKBasedFingers)
-        {
-            // IK Based Fingers.
-            Quaternion rotation = Quaternion.Inverse(_currentWeapon.transform.rotation) *
-                _currentWeapon.HandsIKTargets.RightHandIKTransform.rotation;
+        Quaternion rotation = Quaternion.Inverse(_currentWeapon.transform.rotation) *
+            (_currentWeapon.HandsConstraintType == HandsConstraintType.IKBasedFingers ?
+            _currentWeapon.HandsIKTargets.RightHandIKTransform.rotation :
+            _currentWeapon.HandsRotationConstraintTransforms.RightHandIKTransform.rotation);
 
-            _rightHandFollower.RotationOffset = Quaternion.Inverse(rotation).eulerAngles;
-        }
-        else
-        {
-            // Rotation Based Fingers.
-            Quaternion rotation = Quaternion.Inverse(_currentWeapon.transform.rotation) *
-                _currentWeapon.HandsRotationConstraintTransforms.RightHandIKTransform.rotation;
+        _rightHandFollower.RotationOffset = Quaternion.Inverse(rotation).eulerAngles;
 
-            _rightHandFollower.RotationOffset = Quaternion.Inverse(rotation).eulerAngles;
-        }
-
-        //_rightHandFollower.CalcAndApply();
+        _rightHandFollower.CalcAndApply();
 
         _currentWeapon.transform.parent = _rightHandFollower.transform;
-        StartCoroutine(SmoothTransformLocalToTarget(_currentWeapon.transform, smooth, -_offset, Vector3.zero));
+        StartCoroutine(SmoothTransformLocalToTarget(_currentWeapon.transform, smooth, -offset, Vector3.zero));
     }
 
-    private IEnumerator SmoothTransformLocalToTarget(Transform transformM, bool smooth = true,
+    private IEnumerator SmoothTransformLocalToTarget(Transform localTransform, bool smooth = true,
         Vector3 targetLPosition = default, Vector3 targetLRotation = default, float smoothTime = 0.1f)
     {
-        // Keep track of initial position and rotation
-        Vector3 localPosition = transformM.localPosition;
-        Quaternion localRotation = transformM.localRotation;
+        Vector3 localPosition = localTransform.localPosition;
+        Quaternion localRotation = localTransform.localRotation;
 
-        // Start smooth transition
         float elapsedTime = 0f;
 
         if (smooth)
         {
             while (elapsedTime < smoothTime)
             {
-                transformM.localPosition = Vector3.Lerp(localPosition, targetLPosition, elapsedTime / smoothTime);
-                transformM.localRotation = Quaternion.Lerp(localRotation, Quaternion.Euler(targetLRotation), elapsedTime / smoothTime);
+                localTransform.localPosition = Vector3.Lerp(localPosition, targetLPosition, elapsedTime / smoothTime);
+                localTransform.localRotation = Quaternion.Slerp(localRotation, Quaternion.Euler(targetLRotation), elapsedTime / smoothTime);
 
                 elapsedTime += Time.deltaTime;
+
                 yield return null;
             }
         }
 
-        transformM.localPosition = targetLPosition;
-        transformM.localRotation = Quaternion.Euler(targetLRotation);
+        localTransform.localPosition = targetLPosition;
+        localTransform.localRotation = Quaternion.Euler(targetLRotation);
     }
 
     private void UpdateSwitchingState(bool state)
@@ -1570,17 +1306,147 @@ public class PlayerControllerBackup : MonoBehaviour
 
     private void UpdateSwitchingInputPerformed(bool performed)
     {
-        _switchingInputPerformed = performed;
+        _switchInputPerformed = performed;
     }
 
     private void PerformWeaponSwitchAnimation()
     {
-        _playerAnimator.SetFloat(_weaponSwitchTypeName, animToPlayID);
-        _playerAnimator.SetTrigger(_switchOrHolsterTriggerName);
+        _playerAnimator.SetFloat(_weaponSwitchTypeNameHash, animToPlayID);
+        _playerAnimator.SetTrigger(_switchOrHolsterTriggerNameHash);
     }
+
+    #region Anim Events
+
+    public void OnWeaponSwitchComplete()
+    {
+        UpdateSwitchingState(false);
+        UpdateSwitchingInputPerformed(false);
+        //_currentWeapon.SetWeaponData(this, true);
+        UpdateWeaponUI();
+    }
+
+    public void SnapCurrentWeaponToGunSlot(float smoothTime = 0.2f)
+    {
+        _gunHolderSlot.SmoothTime = smoothTime;
+        _gunHolderSlot.SnapToSocket(_currentWeapon.transform);
+    }
+
+    public void SnapCurrentWeaponToRightHandAndAssignIKTargets()
+    {
+        MoveWeaponToRightHandSlot();
+        SetAllIKFollowersTargetToTargets(_currentWeapon);
+    }
+
+    public void SwitchWeapon(WeaponSwitchType weaponSwitchType)
+    {
+        //_currentWeapon.SetWeaponData(this, false);
+
+        switch (weaponSwitchType)
+        {
+            case WeaponSwitchType.SwitchBetweenRifle:
+                SwitchBetweenSlots(_rifleSlotOne, _rifleSlotTwo);
+                break;
+            case WeaponSwitchType.SwitchBetweenPistolOrKnife:
+                SwitchBetweenSlots(_pistolSlot, _meleeSlot);
+                break;
+            case WeaponSwitchType.SwitchFromPistolOrKnifeToRifle:
+                SnapWeaponToSlotBasedOnPistolOrMeleeType(_currentWeapon.WeaponData.WeaponType, _pistolSlot, _meleeSlot);
+                _currentWeapon = GetWeaponFromSlot(_rifleSlotOne);
+                break;
+            case WeaponSwitchType.SwitchFromRifleToPistol:
+                SnapWeaponToAvailableSlotOfTwo(_rifleSlotOne, _rifleSlotTwo);
+                _currentWeapon = GetWeaponFromSlot(_pistolSlot);
+                break;
+            case WeaponSwitchType.SwitchFromRifleToKnife:
+                SnapWeaponToAvailableSlotOfTwo(_rifleSlotOne, _rifleSlotTwo);
+                _currentWeapon = GetWeaponFromSlot(_meleeSlot);
+                break;
+        }
+
+        //_currentWeapon.SetWeaponData(this, true);
+    }
+
+    public void Holster()
+    {
+        _holstered = true;
+        //_currentWeapon.SetWeaponData(this, false);
+
+        switch (_currentWeapon.WeaponData.WeaponType)
+        {
+            case WeaponType.rifle:
+                SnapWeaponToAvailableSlotOfTwo(_rifleSlotOne, _rifleSlotTwo);
+                break;
+            case WeaponType.pistol:
+            case WeaponType.knife:
+                SnapWeaponToSlotBasedOnPistolOrMeleeType(_currentWeapon.WeaponData.WeaponType, _pistolSlot, _meleeSlot);
+                break;
+        }
+    }
+
+    public void DropCurrentWeapon()
+    {
+        //_currentWeapon.SetWeaponData(this, false);
+        _currentWeapon.transform.SetParent(null);
+
+        _currentWeapon.DropWeapon();
+        _currentWeapon.AddForceToWeapon(_currentWeapon.transform.forward * _dropWeaponForce, ForceMode.Impulse);
+    }
+
+    public void PickNewWeapon()
+    {
+        _currentWeapon = _interactedNewWeapon;
+        //_currentWeapon.SetWeaponData(this, true);
+
+        SetAllIKFollowersTargetToTargets(_currentWeapon);
+
+        UpdateSwitchingInputPerformed(false);
+        UpdateSwitchingState(false);
+
+        SnapCurrentWeaponToGunSlot(_pickNewWeaponSmoothTime);
+    }
+
+
+    private void SwitchBetweenSlots(Slot slotOne, Slot slotTwo)
+    {
+        if (!slotOne.HasObjectInSlot().hasObject)
+        {
+            slotOne.SnapToSocket(_currentWeapon.transform);
+            _currentWeapon = GetWeaponFromSlot(slotTwo);
+        }
+        else if (!slotTwo.HasObjectInSlot().hasObject)
+        {
+            slotTwo.SnapToSocket(_currentWeapon.transform);
+            _currentWeapon = GetWeaponFromSlot(slotOne);
+        }
+    }
+
+    private void SnapWeaponToSlotBasedOnPistolOrMeleeType(WeaponType weaponType, Slot pistolSlot, Slot meleeSlot)
+    {
+        switch (weaponType)
+        {
+            case WeaponType.pistol:
+                pistolSlot.SnapToSocket(_currentWeapon.transform);
+                break;
+            case WeaponType.knife:
+                meleeSlot.SnapToSocket(_currentWeapon.transform);
+                break;
+        }
+    }
+
+    private void SnapWeaponToAvailableSlotOfTwo(Slot slotOne, Slot slotTwo)
+    {
+        if (!slotOne.HasObjectInSlot().hasObject) slotOne.SnapToSocket(_currentWeapon.transform);
+        else if (!slotTwo.HasObjectInSlot().hasObject) slotTwo.SnapToSocket(_currentWeapon.transform);
+    }
+
+    private WeaponBase GetWeaponFromSlot(Slot slot)
+    {
+        return slot.HasObjectInSlot().objectTransforms[0].GetComponent<WeaponBase>();
+    }
+
     #endregion
 
-    // CHANGED
+    #endregion
 
     #endregion
 
@@ -1620,42 +1486,43 @@ public class PlayerControllerBackup : MonoBehaviour
     #region Exposed Methods
 
     // Functions
+    //public void SwapWeapon(WeaponBase newWeapon)
+    //{
+    //    Vector3 newWeaponPickupPosition = newWeapon.transform.position;
+    //    Quaternion newWeaponPickupRotation = newWeapon.transform.rotation;
+
+    //    _currentWeapon.transform.SetParent(newWeapon.transform.parent);
+    //    _currentWeapon.transform.SetPositionAndRotation(newWeaponPickupPosition, newWeaponPickupRotation);
+
+    //    _currentWeapon.SetWeaponData(this, false);
+
+    //    newWeapon.transform.SetParent(_gunHolder);
+    //    newWeapon.transform.SetPositionAndRotation(_gunHolder.position, _gunHolder.rotation);
+
+    //    // Local Position Offsetting.
+    //    newWeapon.transform.localPosition = newWeapon.WeaponData.WeaponPositionOffset;
+
+    //    // Set Current Weapon Is used everywhere instead of iscurrentweapon as we made that private.
+    //    newWeapon.SetWeaponData(this, true);
+
+    //    // Set all ik targets.
+    //    SetAllIKFollowersTargetToTargets(newWeapon);
+
+    //    // Set the new weapon to the current.  
+    //    _currentWeapon = newWeapon;
+
+    //    UpdateWeaponUI();
+    //}
+
     public void SwapWeapon(WeaponBase newWeapon)
     {
-        Vector3 newWeaponPickupPosition = newWeapon.transform.position;
-        Quaternion newWeaponPickupRotation = newWeapon.transform.rotation;
+        _interactedNewWeapon = newWeapon;
+        animToPlayID = _swapWeaponID;
 
-        _currentWeapon.transform.SetParent(newWeapon.transform.parent);
-        _currentWeapon.transform.SetPositionAndRotation(newWeaponPickupPosition, newWeaponPickupRotation);
-        // CHANGED
-        //_currentWeapon.SetCurrentWeapon(false);
-        //_currentWeapon.SetWeaponData(this, false);
-
-        if (newWeapon.WeaponData.WeaponType == WeaponType.rifle)
-        {
-            newWeapon.transform.SetParent(_rifleHolder);
-            newWeapon.transform.SetPositionAndRotation(_rifleHolder.position, _rifleHolder.rotation);
-        }
-        else if (newWeapon.WeaponData.WeaponType == WeaponType.pistol)
-        {
-            newWeapon.transform.SetParent(_pistolHolder);
-            newWeapon.transform.SetPositionAndRotation(_pistolHolder.position, _pistolHolder.rotation);
-        }
-
-        // Local Position Offsetting.
-        newWeapon.transform.localPosition = newWeapon.WeaponData.WeaponPositionOffset;
-
-        // Set Current Weapon Is used everywhere instead of iscurrentweapon as we made that private.
-        // CHANGED
-        //newWeapon.SetCurrentWeapon(true);
-        //newWeapon.SetControllerReference(this);
-        //newWeapon.SetWeaponData(this, true);
-
-        // Set all ik targets.
-        SetAllIKFollowersTargetToTargets(newWeapon);
-
-        // Set the new weapon to the current.
-        _currentWeapon = newWeapon;
+        UpdateSwitchingInputPerformed(true);
+        UpdateSwitchingState(true);
+        MoveWeaponToRightHandSlot(false);
+        PerformWeaponSwitchAnimation();
     }
 
     private void SetAllIKFollowersTargetToTargets(WeaponBase weapon)
@@ -1822,6 +1689,329 @@ public class PlayerControllerBackup : MonoBehaviour
     public bool IsClipped()
     {
         return _weaponClippedState == WeaponClippedState.clipped;
+    }
+
+    #endregion
+
+    #region CHANGES !REGION
+
+    // ITEM SYSTEM
+    // -- MISC --
+    private enum ButtonState
+    {
+        performed,
+        rest,
+    }
+
+    private ButtonState _itemButtonState = ButtonState.rest;
+
+    private void HandleItems()
+    {
+        if (!_switchInputPerformed && !_currentWeapon._isReloading && _currentItem.Amount > 0)
+        {
+            if (Input.Player.UseItem.triggered)
+            {
+                //_currentItem.Item.StartUse(this);
+                _currentItem.Item.gameObject.SetActive(true);
+
+                _itemButtonState = ButtonState.performed;
+            }
+
+            if (Input.Player.UseItem.WasReleasedThisFrame() && _itemButtonState == ButtonState.performed)
+            {
+                //_currentItem.Item.ReleaseUse(this);
+                _currentItem.Amount -= 1;
+
+                _playerUI.UpdateItemWheel(Items, _currentItem);
+
+                _playerUI.SetActiveCancelPromptUI(false);
+
+                _itemButtonState = ButtonState.rest;
+            }
+        }
+
+        if (Input.Player.UseItem.IsPressed() && _itemButtonState == ButtonState.performed)
+        {
+            //_currentItem.Item.HoldUse(this);
+
+            _playerUI.SetActiveCancelPromptUI(true);
+
+            if (Input.Player.CancelUseItem.triggered)
+            {
+                //_currentItem.Item.CancelUse(this);
+                _currentItem.Item.gameObject.SetActive(false);
+
+                _playerUI.SetActiveCancelPromptUI(false);
+
+                _itemButtonState = ButtonState.rest;
+
+                UpdateSwitchingState(false);
+            }
+        }
+
+        // Item Wheel Active Handling
+        if (Input.Player.OpenItemWheel.triggered)
+        {
+            _playerUI.UpdateItemWheel(Items, _currentItem);
+            _playerUI.SetActiveItemWheel(true);
+
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+        }
+
+        if (Input.Player.OpenItemWheel.WasReleasedThisFrame())
+        {
+            _playerUI.SetActiveItemWheel(false);
+
+            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
+        }
+    }
+
+    // -- TESTING VARIABLES --
+    private ItemBase _clonedItem;
+    private Rigidbody _itemRb;
+    private GameObject _remoteObject;
+
+    // -- ANIM EVENTS --
+    public void ThrowGrenade()
+    {
+        Rigidbody itemRigidbody;
+
+        if (_itemRb.TryGetComponent(out GrenadeItem grenadeItem) && grenadeItem.UseSeperateThrownObject == true)
+        {
+            _clonedItem = Instantiate(grenadeItem.ThrownObject).GetComponent<ItemBase>();
+
+            _clonedItem.TryGetComponent(out itemRigidbody);
+        }
+        else
+        {
+            _clonedItem = Instantiate(_itemRb.gameObject).GetComponent<ItemBase>();
+
+            _clonedItem.TryGetComponent(out itemRigidbody);
+        }
+
+        ThrowGrenadeRB(itemRigidbody);
+
+        LineRenderer.enabled = false;
+    }
+
+    public void ThrowGrenadeAndExplode()
+    {
+        _itemRb.gameObject.SetActive(false);
+
+        Rigidbody itemRigidbody;
+
+        if (_itemRb.TryGetComponent(out GrenadeItem grenadeItem) && grenadeItem.UseSeperateThrownObject == true)
+        {
+            Instantiate(grenadeItem.ThrownObject).TryGetComponent(out itemRigidbody);
+        }
+        else
+        {
+            Instantiate(_itemRb.gameObject).TryGetComponent(out itemRigidbody);
+        }
+
+        ThrowGrenadeRB(itemRigidbody);
+
+        TryExplodeGrenadeWithDelay(itemRigidbody);
+
+        LineRenderer.enabled = false;
+    }
+
+    public void ExplodeClonedItem()
+    {
+        if (_clonedItem != null) TryExplodeGrenade(_clonedItem.GetComponent<Rigidbody>());
+    }
+
+    public void EndThrowGrenade()
+    {
+        HideGrenadeIndicators();
+    }
+
+
+    // -- ITEM EVENTS --
+    public void ShowGrenadeIndicators(Rigidbody rb)
+    {
+        LineRenderer.enabled = true;
+
+        UpdateGrenadeIndicators(rb);
+
+        //_currentWeapon.SetWeaponData(this, false);
+        _currentWeapon.transform.SetParent(_leftHandFollower.transform);
+
+        _playerAnimator.SetBool("AimGrenadeState", true);
+
+        UpdateSwitchingState(true);
+    }
+
+    public void HideGrenadeIndicators()
+    {
+        StartCoroutine(DelayedSwitchFalse(DelayBeforeSwitchInputIsFalse));
+
+        UpdateSwitchingState(false);
+
+        _playerAnimator.SetBool("AimGrenadeState", false);
+
+        //_currentWeapon.SetWeaponData(this, true);
+
+        LineRenderer.enabled = false;
+
+        SnapCurrentWeaponToGunSlot();
+
+        if (_remoteObject != null) _remoteObject.SetActive(false);
+    }
+
+    public void UpdateGrenadeIndicators(Rigidbody rb)
+    {
+        if (!UseGrenadePredictionLine) return;
+
+        LineRenderer.positionCount = Mathf.CeilToInt(LinePoints / TimeBetweenPoints) + 1;
+
+        Vector3 startPosition = ReleasePosition.position;
+        Vector3 startVelocity = ThrowStrength * ReleasePosition.forward / rb.mass;
+
+        int i = 0;
+
+        LineRenderer.SetPosition(i, startPosition);
+
+        for (float time = 0; time < LinePoints; time += TimeBetweenPoints)
+        {
+            i++;
+            Vector3 point = startPosition + time * startVelocity;
+            point.y = startPosition.y + startVelocity.y * time + (Physics.gravity.y / 2f * time * time);
+
+            LineRenderer.SetPosition(i, point);
+
+            Vector3 lastPosition = LineRenderer.GetPosition(i - 1);
+
+            if (Physics.Raycast(lastPosition, (point - lastPosition).normalized, out RaycastHit hit, (point - lastPosition).magnitude, GrenadeCollisionLayerMask))
+            {
+                LineRenderer.SetPosition(i, hit.point);
+                LineRenderer.positionCount = i + 1;
+                return;
+            }
+        }
+    }
+
+    public void PerformGrenadeThrowAnim(Rigidbody rb)
+    {
+        _itemRb = rb;
+
+        if (!_switchInputPerformed) _playerAnimator.SetTrigger("ThrowGrenade");
+
+        UpdateSwitchingInputPerformed(true);
+    }
+
+
+    public void PerformRemoteGrenadeThrowAnim(Rigidbody rb)
+    {
+        _itemRb = rb;
+
+        if (!_switchInputPerformed) _playerAnimator.SetTrigger("ThrowRemoteGrenade");
+
+        UpdateSwitchingInputPerformed(true);
+    }
+
+    public void DetonateRemoteGrenade(GameObject remoteObject)
+    {
+        _remoteObject = remoteObject;
+
+        _playerAnimator.SetTrigger("DetonateGrenade");
+    }
+
+
+    public void SelectItem(InventoryItem item)
+    {
+        for (int i = 0; i < Items.Count; i++)
+        {
+            if (Items[i].Item.ItemType == item.Item.ItemType)
+            {
+                _currentItem = item;
+                break;
+            }
+        }
+    }
+
+    public void AddNewItem(ItemBase item, int amount = 1)
+    {
+        for (int i = 0; i < Items.Count; i++)
+        {
+            if (Items[i].Item.ItemType == item.ItemType)
+            {
+                Items[i].Amount += amount;
+
+                Destroy(item.gameObject);
+
+                _playerUI.UpdateItemWheel(Items, _currentItem);
+
+                return;
+            }
+        }
+
+        // If the Default Loadout doesn't have it yet, Create a new Inventory Item.
+        InventoryItem inventoryItem = new InventoryItem();
+
+        inventoryItem.Item = item;
+        inventoryItem.Amount = amount;
+
+        Items.Add(inventoryItem);
+
+        item.transform.SetParent(ItemsParent);
+        item.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
+        item.gameObject.SetActive(false);
+
+        _playerUI.UpdateItemWheel(Items, _currentItem);
+    }
+
+    public void AddHealth(int healthAddition)
+    {
+        _currentItem.Item.gameObject.SetActive(false);
+        UpdateSwitchingState(false);
+    }
+
+
+    // -- PRIVATE FUNCTIONS --
+    private void TryExplodeGrenadeWithDelay(Rigidbody rb)
+    {
+        if (rb == null) return;
+
+        rb.TryGetComponent(out GrenadeItem grenadeItem);
+
+        if (grenadeItem != null) grenadeItem.ExplodeGrenadeDelay();
+    }
+
+    private void TryExplodeGrenade(Rigidbody rb)
+    {
+        if (rb == null) return;
+
+        rb.TryGetComponent(out GrenadeItem grenadeItem);
+
+        if (grenadeItem != null) grenadeItem.ExplodeGrenade();
+    }
+
+    private void ThrowGrenadeRB(Rigidbody rb)
+    {
+        if (rb == null) return;
+
+        rb.transform.position = _itemRb.transform.position;
+        rb.transform.rotation = _itemRb.transform.rotation;
+
+        rb.isKinematic = false;
+        rb.gameObject.SetActive(true);
+
+        rb.velocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
+
+        rb.transform.SetParent(null);
+
+        rb.AddForce(ReleasePosition.forward * ThrowStrength, ForceMode.Impulse);
+    }
+
+    private IEnumerator DelayedSwitchFalse(float delay = 0.3f)
+    {
+        yield return new WaitForSeconds(delay);
+
+        UpdateSwitchingInputPerformed(false);
     }
 
     #endregion

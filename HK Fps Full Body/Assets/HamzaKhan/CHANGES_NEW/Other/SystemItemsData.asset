@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95104b9c40b454d81aee7e5c9dd2bfd6, type: 3}
+  m_Name: SystemItemsData
+  m_EditorClassIdentifier: 
+  ItemTypeEntries:
+  - ItemType: 0
+    Icon: {fileID: 21300038, guid: a1d46cd3f2614cc43be92ab44ea7d819, type: 3}
+    IconSize: {x: 48.8, y: 61.2}
+  - ItemType: 1
+    Icon: {fileID: 21300022, guid: a1d46cd3f2614cc43be92ab44ea7d819, type: 3}
+    IconSize: {x: 55.68, y: 67.56}
+  - ItemType: 2
+    Icon: {fileID: 21300028, guid: a1d46cd3f2614cc43be92ab44ea7d819, type: 3}
+    IconSize: {x: 40.8, y: 79.4624}
+  - ItemType: 3
+    Icon: {fileID: 21300032, guid: a1d46cd3f2614cc43be92ab44ea7d819, type: 3}
+    IconSize: {x: 43.1, y: 76.3}
+  - ItemType: 4
+    Icon: {fileID: 21300000, guid: 836c1018ab73d4f86ac406ae4aca4ce5, type: 3}
+    IconSize: {x: 66.64, y: 50}
+  - ItemType: 5
+    Icon: {fileID: 21300000, guid: 8d0bbe9baa3384b8295872e596f9c77d, type: 3}
+    IconSize: {x: 76.8, y: 66.56}
+  - ItemType: 6
+    Icon: {fileID: 21300046, guid: a1d46cd3f2614cc43be92ab44ea7d819, type: 3}
+    IconSize: {x: 50, y: 50}

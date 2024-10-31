@@ -56,10 +56,41 @@ public class CharacterCreatorSwitcherSystemWindow : EditorWindow
         playerParentGameObject.AddComponent<PlayerController>();
         playerParentGameObject.AddComponent<PlayerUI>();
 
+        SerializedObject playerSObject = new SerializedObject(playerParentGameObject.GetComponent<PlayerController>());
+
+        SerializedProperty HandsIkTransformProperty = playerSObject.FindProperty("_handsIKFollowers");
+
+        GameObject lhand = new GameObject("lhand");
+
+        GameObject lhandIndex = new GameObject("lhandIndex");
+        GameObject lhandMiddle = new GameObject("lhandMiddle");
+        GameObject lhandPinky = new GameObject("lhandPinky");
+        GameObject lhandRing = new GameObject("lhandRing");
+        GameObject lhandThumb = new GameObject("lhandThumb");
+
+        AssignPrivatePropertyObj(playerSObject, HandsIkTransformProperty, "LeftHandIKTransform", lhand.transform, playerParentGameObject.GetComponent<PlayerController>());
+
+        AssignPrivatePropertyObj(playerSObject, HandsIkTransformProperty, "LeftHandIndexIKTransform", lhandIndex.transform, playerParentGameObject.GetComponent<PlayerController>());
+        AssignPrivatePropertyObj(playerSObject, HandsIkTransformProperty, "LeftHandMiddleIKTransform", lhandMiddle.transform, playerParentGameObject.GetComponent<PlayerController>());
+        AssignPrivatePropertyObj(playerSObject, HandsIkTransformProperty, "LeftHandPinkyIKTransform", lhandPinky.transform, playerParentGameObject.GetComponent<PlayerController>());
+        AssignPrivatePropertyObj(playerSObject, HandsIkTransformProperty, "LeftHandRingIKTransform", lhandRing.transform, playerParentGameObject.GetComponent<PlayerController>());
+        AssignPrivatePropertyObj(playerSObject, HandsIkTransformProperty, "LeftHandThumbIKTransform", lhandThumb.transform, playerParentGameObject.GetComponent<PlayerController>());
+
         if (playerModel != null)
         {
             playerModel.transform.SetParent(playerParentGameObject.transform);
             playerModel.AddComponent<Animator>();
         }
+    }
+
+    private void AssignPrivatePropertyObj(SerializedObject serializedObject, SerializedProperty serializedProperty, string relativePropertyName, Object objReference, Component component = null)
+    {
+        SerializedProperty relativeProperty = serializedProperty.FindPropertyRelative(relativePropertyName);
+
+        relativeProperty.objectReferenceValue = objReference;
+
+        serializedObject.ApplyModifiedProperties();
+
+        if (component != null) EditorUtility.SetDirty(component);
     }
 }

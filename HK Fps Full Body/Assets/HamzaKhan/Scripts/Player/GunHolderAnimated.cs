@@ -26,6 +26,10 @@ public class GunHolderAnimated : MonoBehaviour
         );
     private AnimationCurve _bumpCurve;
 
+    // CHANGES Added move input vector(
+    //private Vector2 _moveInput;
+    // CHANGES )
+
     // Start is called before the first frame update
     void Start()
     {
@@ -38,12 +42,24 @@ public class GunHolderAnimated : MonoBehaviour
         _startRot = transform.localRotation.eulerAngles;
     }
 
-    // Update is called once per frame
-    void Update()
+    //public void UpdateMoveInput(Vector2 moveInput)
+    //{
+    //    _moveInput = moveInput;
+    //}
+
+    //// Update is called once per frame
+    //void Update()
+    //{
+    //    HeadBobCheck();
+    //    SmoothTransformToTarget();
+    //    HandleBumpEffect();
+    //}
+
+    public void UpdateGHAnimator(Vector2 moveInput, bool grounded, bool walking, bool sprinting, bool crouching)
     {
-        HeadBobCheck();
-        SmoothTransformToTarget();
-        HandleBumpEffect();
+        HeadBobCheck(moveInput, grounded, walking, sprinting, crouching);
+        SmoothTransformToTarget(sprinting);
+        HandleBumpEffect(sprinting);
     }
 
     #endregion
@@ -53,16 +69,22 @@ public class GunHolderAnimated : MonoBehaviour
     /// <summary>
     /// Check whether we should be applying headbob.
     /// </summary>
-    private void HeadBobCheck()
+    private void HeadBobCheck(Vector2 moveInput, bool grounded, bool walking, bool sprinting, bool crouching)
     {
-        Vector2 moveInput = MainBobSettings.Controller.Input.Player.Move.ReadValue<Vector2>();
+        // CHANGES Look at the next code line, uses the newly created vector(
+        //Vector2 moveInput = MainBobSettings.Controller.Input.Player.Move.ReadValue<Vector2>();
+        // CHANGES )
+
+        // CHANGES (
+        //float inputMag = moveInput.magnitude;
         float inputMag = moveInput.magnitude;
+        // CHANGES )
 
         if (inputMag > 0)
         {
             // Perform movement Effects.
-            CreateHeadBobPositionEffect();
-            MoveTilt();
+            CreateHeadBobPositionEffect(grounded, walking, sprinting, crouching);
+            MoveTilt(grounded, moveInput);
         }
     }
 
@@ -70,13 +92,17 @@ public class GunHolderAnimated : MonoBehaviour
     /// Create the HeadBob Effect.
     /// </summary>
     /// <returns></returns>
-    private Vector3 CreateHeadBobPositionEffect()
+    private Vector3 CreateHeadBobPositionEffect(bool grounded, bool walking, bool sprinting, bool crouching)
     {
         Vector3 pos = Vector3.zero;
 
-        if (MainBobSettings.Controller.IsGrounded() == true)
+        //// CHANGES BELOW <OLD ARE COMMENTED>
+
+        //if (MainBobSettings.Controller.IsGrounded() == true)
+        if (grounded)
         {
-            if (MainBobSettings.Controller.IsWalking() == true)
+            //if (MainBobSettings.Controller.IsWalking() == true)
+            if (walking)
             {
                 pos.x += Mathf.Lerp(pos.x, Mathf.Cos(Time.time * HeadBobSettings.WalkBobSpeed / 2f) *
                     HeadBobSettings.WalkBobAmount * HeadBobSettings.WalkXMulti, HeadBobSettings.Smoothing * Time.deltaTime);
@@ -84,7 +110,8 @@ public class GunHolderAnimated : MonoBehaviour
                 pos.y += Mathf.Lerp(pos.y, Mathf.Sin(Time.time * HeadBobSettings.WalkBobSpeed) *
                     HeadBobSettings.WalkBobAmount * HeadBobSettings.WalkYMulti, HeadBobSettings.Smoothing * Time.deltaTime);
             }
-            else if (MainBobSettings.Controller.IsSprinting() == true)
+            //else if (MainBobSettings.Controller.IsSprinting() == true)
+            else if (sprinting)
             {
                 pos.x += Mathf.Lerp(pos.x, Mathf.Cos(Time.time * HeadBobSettings.SprintBobSpeed / 2f) *
                     HeadBobSettings.SprintBobAmount * HeadBobSettings.SprintXMulti, HeadBobSettings.Smoothing * Time.deltaTime);
@@ -95,7 +122,8 @@ public class GunHolderAnimated : MonoBehaviour
                 pos.z += Mathf.Lerp(pos.z, Mathf.Sin(Time.time * HeadBobSettings.SprintBobSpeed / 2f) *
                    HeadBobSettings.SprintBobAmount * HeadBobSettings.SprintZMulti, HeadBobSettings.Smoothing * Time.deltaTime);
             }
-            else if (MainBobSettings.Controller.IsCrouching() == true)
+            //else if (MainBobSettings.Controller.IsCrouching() == true)
+            else if (crouching)
             {
                 pos.x += Mathf.Lerp(pos.x, Mathf.Cos(Time.time * HeadBobSettings.CrouchBobSpeed / 2f) *
                     HeadBobSettings.CrouchBobAmount * HeadBobSettings.CrouchXMulti, HeadBobSettings.Smoothing * Time.deltaTime);
@@ -114,15 +142,21 @@ public class GunHolderAnimated : MonoBehaviour
     /// Handle's The Movement tilt of the weapon.
     /// </summary>
     /// <returns></returns>
-    private Vector3 MoveTilt()
+    private Vector3 MoveTilt(bool grounded, Vector2 moveInput)
     {
         Vector3 rot = Vector3.zero;
 
-        if (MainBobSettings.Controller.IsGrounded() == true)
-        {
-            Vector2 moveInput = MainBobSettings.Controller.Input.Player.Move.ReadValue<Vector2>();
+        // CHANGES.
 
+        //if (MainBobSettings.Controller.IsGrounded() == true)
+        if (grounded)
+        {
+            // CHANGES Use new vector instead of getting vector (
+            //Vector2 moveInput = MainBobSettings.Controller.Input.Player.Move.ReadValue<Vector2>();
+
+            //rot.z = moveInput.x * HeadBobSettings.XTiltMulti * Time.deltaTime;
             rot.z = moveInput.x * HeadBobSettings.XTiltMulti * Time.deltaTime;
+            // CHANGES )
 
             transform.localRotation *= Quaternion.Euler(rot);
         }
@@ -133,13 +167,21 @@ public class GunHolderAnimated : MonoBehaviour
     /// <summary>
     /// Smooths the transform to the target.
     /// </summary>
-    private void SmoothTransformToTarget()
+    private void SmoothTransformToTarget(bool sprinting)
     {
+        // CHANGES (
         // Set local position and rotation.
-        transform.SetLocalPositionAndRotation(Vector3.Lerp(transform.localPosition, _startPos + (MainBobSettings.Controller.IsSprinting() ?
+        //transform.SetLocalPositionAndRotation(Vector3.Lerp(transform.localPosition, _startPos + (MainBobSettings.Controller.IsSprinting() ?
+        //    HeadBobSettings.SprintPositionOffset : Vector3.zero), HeadBobSettings.Smoothing * Time.deltaTime),
+        //    Quaternion.Slerp(transform.localRotation, Quaternion.Euler(MainBobSettings.Controller.IsSprinting() ?
+        //    HeadBobSettings.SprintRotation : _startRot), HeadBobSettings.Smoothing * Time.deltaTime));
+
+        transform.SetLocalPositionAndRotation(Vector3.Lerp(transform.localPosition, _startPos + (sprinting ?
             HeadBobSettings.SprintPositionOffset : Vector3.zero), HeadBobSettings.Smoothing * Time.deltaTime),
-            Quaternion.Slerp(transform.localRotation, Quaternion.Euler(MainBobSettings.Controller.IsSprinting() ?
+            Quaternion.Slerp(transform.localRotation, Quaternion.Euler(sprinting ?
             HeadBobSettings.SprintRotation : _startRot), HeadBobSettings.Smoothing * Time.deltaTime));
+
+        // CHANGES )
     }
 
     /// <summary>
@@ -160,7 +202,7 @@ public class GunHolderAnimated : MonoBehaviour
     /// <summary>
     /// Handles the bumping effect.
     /// </summary>
-    private void HandleBumpEffect()
+    private void HandleBumpEffect(bool sprinting)
     {
         // Out of here if we aren't bumping.
         if (_isBumping == false) return;
@@ -172,8 +214,14 @@ public class GunHolderAnimated : MonoBehaviour
         float bumpProgress = _bumpTimer / _bumpDuration;
 
         // Apply the bump effect using the curve.
-        transform.localPosition = _startPos + (MainBobSettings.Controller.IsSprinting() ? HeadBobSettings.SprintPositionOffset :
+        // CHANGES (
+        //transform.localPosition = _startPos + (MainBobSettings.Controller.IsSprinting() ? HeadBobSettings.SprintPositionOffset :
+        //    Vector3.zero) + _bumpForce * _bumpCurve.Evaluate(bumpProgress);
+
+        transform.localPosition = _startPos + (sprinting ? HeadBobSettings.SprintPositionOffset :
             Vector3.zero) + _bumpForce * _bumpCurve.Evaluate(bumpProgress);
+
+        // CHANGES )
 
         // Disable Bumping Once Bumping is Complete
         if (bumpProgress >= 1f) _isBumping = false;
@@ -218,8 +266,11 @@ public class HeadBobSettings
 [Serializable]
 public class MainBobSettings
 {
-    [Header("Controller")]
-    public PlayerController Controller;
+    //[Header("Controller")]
+    // CHANGES (
+    //public PlayerController Controller;
+    //public HKPlayerLocomotionCC ControllerCC;
+    // CHANGES )
 }
 
 #endregion

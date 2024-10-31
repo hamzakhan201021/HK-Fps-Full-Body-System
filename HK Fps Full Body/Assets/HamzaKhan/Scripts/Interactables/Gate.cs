@@ -29,22 +29,46 @@ public class Gate : MonoBehaviour, IInteractable
         return _interactMessage;
     }
 
+    // CHANGES (
+    ///// <summary>
+    ///// Returns if you can interact with this object.
+    ///// </summary>
+    ///// <param name="playerController"></param>
+    ///// <returns></returns>
+    //public bool CanInteract(PlayerController playerController)
+    //{
+    //    return true;
+    //}
+
     /// <summary>
     /// Returns if you can interact with this object.
     /// </summary>
     /// <param name="playerController"></param>
     /// <returns></returns>
-    public bool CanInteract(PlayerController playerController)
+    public bool CanInteract(HKPlayerInteractionBase interactionController)
     {
         return true;
     }
+
+    // CHANGES )
+
+    // CHANGES (
+    ///// <summary>
+    ///// Use this to perform actual interaction.
+    ///// </summary>
+    ///// <param name="playerController"></param>
+    //public void Interact(PlayerController playerController)
+    //{
+    //    _anim.SetTrigger(_openCloseTriggerNameHash);
+    //}
 
     /// <summary>
     /// Use this to perform actual interaction.
     /// </summary>
     /// <param name="playerController"></param>
-    public void Interact(PlayerController playerController)
+    public void Interact(HKPlayerInteractionBase playerController)
     {
         _anim.SetTrigger(_openCloseTriggerNameHash);
     }
+    // CHANGES )
 }

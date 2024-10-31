@@ -6,6 +6,7 @@ using UnityEditor;
 [CreateAssetMenu(fileName = "WeaponScriptableObject", menuName = "ScriptableObjects/WeaponScriptableObject")]
 public class WeaponSO : ScriptableObject
 {
+    public CameraShakeProfile ShakeProfile;
     [Space]
     // Weapon Settings Header.
     [Header("Weapon Settings")]

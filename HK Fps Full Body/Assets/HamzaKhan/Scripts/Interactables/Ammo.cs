@@ -7,17 +7,31 @@ public class Ammo : MonoBehaviour, IInteractable
     [SerializeField] private int _totalAmmo = 90;
     [SerializeField] private string _interactMessage;
 
+    // CHANGES (
+    //public void Interact(PlayerController playerController)
+    //{
+    //    playerController.CurrentWeapon().TotalAmmo += _totalAmmo;
+    //    Destroy(gameObject);
+    //}
 
-    public void Interact(PlayerController playerController)
+    public void Interact(HKPlayerInteractionBase playerController)
     {
-        playerController.CurrentWeapon().TotalAmmo += _totalAmmo;
+        playerController.AddAmmo(_totalAmmo);
         Destroy(gameObject);
     }
+    // CHANGES )
 
-    public bool CanInteract(PlayerController playerController)
+    // CHANGES (
+    //public bool CanInteract(PlayerController playerController)
+    //{
+    //    return true;
+    //}
+
+    public bool CanInteract(HKPlayerInteractionBase interactionController)
     {
         return true;
     }
+    // CHANGES )
 
     public string GetMessage()
     {

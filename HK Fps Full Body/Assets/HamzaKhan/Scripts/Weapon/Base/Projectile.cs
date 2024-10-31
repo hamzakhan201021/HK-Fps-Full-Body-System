@@ -8,12 +8,15 @@ public class Projectile : MonoBehaviour
     [SerializeField] private float _maxDestructionTime = 5f;
 
     private Rigidbody rb;
+    private HealthDamageData _healthDamageData;
 
-    public void Fire(float fireForce)
+    public void Fire(float fireForce, HealthDamageData healthDamageData)
     {
         rb = GetComponent<Rigidbody>();
 
         rb.AddForce(transform.forward * fireForce, ForceMode.Impulse);
+
+        _healthDamageData = healthDamageData;
 
         Destroy(gameObject, _maxDestructionTime);
     }
@@ -24,7 +27,7 @@ public class Projectile : MonoBehaviour
         IHitable iHitable = collision.transform.GetComponent<IHitable>();
 
         // check if ihitable is not null.
-        if (iHitable != null) iHitable.Hit(collision.transform.gameObject, collision.GetContact(0).point, collision.GetContact(0).normal);
+        if (iHitable != null) iHitable.Hit(collision.transform.gameObject, collision.GetContact(0).point, collision.GetContact(0).normal, _healthDamageData);
 
         // destroy.
         Destroy(gameObject);

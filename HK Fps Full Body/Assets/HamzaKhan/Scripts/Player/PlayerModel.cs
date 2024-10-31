@@ -1,5 +1,7 @@
 using UnityEngine;
+using UnityEngine.Events;
 
+// CHANGES ARE IN !REGIONS
 public class PlayerModel : MonoBehaviour
 {
 
@@ -7,13 +9,28 @@ public class PlayerModel : MonoBehaviour
     [Header("Main Settings")]
     [SerializeField] private AudioClip _footAudioClip;
 
-    private PlayerController _playerController;
-
-    void Start()
-    {
-        // Get Controller.
-        _playerController = GetComponentInParent<PlayerController>();
-    }
+    // CHANGES (
+    [Space]
+    public HKPlayerInput _playerInput;
+    [Space]
+    public UnityEvent OnWeaponSwitchComplete;
+    [Space]
+    public UnityEvent OnHolster;
+    [Space]
+    public UnityEvent<WeaponSwitchType> OnSwitchWeapon;
+    [Space]
+    public UnityEvent<float> OnSnapCurrentWeaponToGunSlot;
+    [Space]
+    public UnityEvent OnSnapCurrentWeaponToRightHandAndAssignIKTargets;
+    [Space]
+    public UnityEvent OnDropCurrentWeapon;
+    [Space]
+    public UnityEvent OnPickNewWeapon;
+    [Space]
+    public UnityEvent OnThrowItem;
+    [Space]
+    public UnityEvent OnItemThrowComplete;
+    // CHANGES )
 
     // Animation Events
     #region Events
@@ -24,7 +41,7 @@ public class PlayerModel : MonoBehaviour
     private void PlayFootSound()
     {
         // check if there is some movement input.
-        if (_playerController.Input.Player.Move.ReadValue<Vector2>() != Vector2.zero)
+        if (_playerInput.GetInputActions().Player.Move.ReadValue<Vector2>() != Vector2.zero)
         {
             // play the foot audio clip
             AudioSource.PlayClipAtPoint(_footAudioClip, transform.position, 1f);
@@ -33,38 +50,83 @@ public class PlayerModel : MonoBehaviour
 
     private void WeaponSwitchComplete()
     {
-        _playerController.OnWeaponSwitchComplete();
+        // CHANGES (
+        //_playerController.OnWeaponSwitchComplete();
+
+        OnWeaponSwitchComplete.Invoke();
+        // CHANGES )
     }
 
     private void Holster()
     {
-        _playerController.Holster();
+        // CHANGES (
+        //_playerController.Holster();
+
+        OnHolster.Invoke();
+        // CHANGES )
     }
 
     private void SwitchWeapon(WeaponSwitchType weaponSwitchType)
     {
-        _playerController.SwitchWeapon(weaponSwitchType);
+        // CHANGES (
+        //_playerController.SwitchWeapon(weaponSwitchType);
+
+        OnSwitchWeapon.Invoke(weaponSwitchType);
+        // CHANGES )
     }
 
     private void SnapCurrentWeaponToGunSlot()
     {
-        _playerController.SnapCurrentWeaponToGunSlot();
+        // CHANGES (
+        //_playerController.SnapCurrentWeaponToGunSlot();
+
+        OnSnapCurrentWeaponToGunSlot.Invoke(0.2f);
+        // CHANGES )
     }
 
     private void SnapCurrentWeaponToRightHandAndAssignIKTargets()
     {
-        _playerController.SnapCurrentWeaponToRightHandAndAssignIKTargets();
+        // CHANGES (
+        //_playerController.SnapCurrentWeaponToRightHandAndAssignIKTargets();
+
+        OnSnapCurrentWeaponToRightHandAndAssignIKTargets.Invoke();
+        // CHANGES )
     }
 
     private void DropCurrentWeapon()
     {
-        _playerController.DropCurrentWeapon();
+        // CHANGES (
+        //_playerController.DropCurrentWeapon();
+
+        OnDropCurrentWeapon.Invoke();
+        // CHANGES )
     }
 
     private void PickNewWeapon()
     {
-        _playerController.PickNewWeapon();
+        // CHANGES (
+        //_playerController.PickNewWeapon();
+
+        OnPickNewWeapon.Invoke();
+        // CHANGES )
     }
 
     #endregion
+
+    public void ThrowGrenadeAndExplode()
+    {
+        //_playerController.ThrowGrenadeAndExplode();
+    }
+
+    public void EndGrenadeThrow()
+    {
+        //_playerController.EndThrowGrenade();
+        OnItemThrowComplete.Invoke();
+    }
+
+    public void ThrowItem()
+    {
+        //_playerController.ThrowGrenade();
+        OnThrowItem?.Invoke();
+    }
 }

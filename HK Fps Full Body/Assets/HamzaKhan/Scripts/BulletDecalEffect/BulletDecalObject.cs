@@ -19,7 +19,7 @@ public class BulletDecalObject : MonoBehaviour, IHitable
     [Tooltip("Audio Effect Volume, Useful if you assign the hitObjectClip")]
     [SerializeField, Range(0f, 1f)] private float _audioVolume = 1.0f;
 
-    public void Hit(GameObject hitObject, Vector3 hitPoint, Vector3 hitNormal)
+    public void Hit(GameObject hitObject, Vector3 hitPoint, Vector3 hitNormal, HealthDamageData healthDamageData)
     {
         // Spawn Bullet Decal Effect.
         GameObject decal = Instantiate(_decalPrefab, hitPoint, Quaternion.LookRotation(hitNormal));

@@ -12,11 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 605f031169e61448a8e7eba60e243620, type: 3}
   m_Name: BennelliM4WeaponSO
   m_EditorClassIdentifier: 
+  ShakeProfile: {fileID: 11400000, guid: c1dd4c0442ca84bdfba54c195824ddd8, type: 2}
   WeaponName: Bennelli M4
   WeaponIconSprite: {fileID: 21300026, guid: c6e105a65ec1048489089659e0bee1a9, type: 3}
   CrossHairSprite: {fileID: 21300000, guid: 52ddea2e3d4507a46a8672b7f5b4b828, type: 3}
   WeaponIconImageHeight: 50
   WeaponIconImageWidth: 150
+  WeaponUIPositionOffset: {x: 0, y: 0, z: 0}
+  WeaponUIRotationOffset: {x: 0, y: 0, z: 0}
   TimeBetweenShot: 0.4
   ReloadingAnimationTime: 10.083
   MaxBulletSpreadAngle: 5
@@ -35,7 +38,7 @@ MonoBehaviour:
   ExtraHeatCoolingThreshold: 25
   ExtraOverheatThreshold: 40
   ClipProjectorPosition: {x: 0.188, y: 0.1339997, z: 0.485}
-  NewPosition: {x: 0, y: -0.12, z: 0.2}
+  NewPosition: {x: -0.1867088, y: -0.2419831, z: -0.07580589}
   NewRotation: {x: 71.93, y: -76.1, z: -26.88}
   BoxCastSize: {x: 0.05, y: 0.24, z: 0.99}
   BoxCastClippedSize: {x: 0.07, y: 0.26, z: 1.01}
@@ -50,5 +53,5 @@ MonoBehaviour:
   CinemachineRecoilImpulse: {x: 0.005, y: 0.005, z: 0.03}
   SwayAmount: 1.5
   SwaySmooth: 5
-  WeaponPositionOffset: {x: 0, y: 0, z: 0}
+  WeaponPositionOffset: {x: 0.1867088, y: 0.1219831, z: 0.2758059}
   SpineConstraintOffsetY: 50

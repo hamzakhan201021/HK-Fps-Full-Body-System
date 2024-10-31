@@ -157,6 +157,33 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "OpenItemWheel",
+                    "type": "Button",
+                    "id": "580ac70a-cb83-453e-a403-2c6ca729f47c",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Detonate",
+                    "type": "Button",
+                    "id": "7494b35c-b576-43dc-a4f5-4056f5dbd736",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "RevivePlayer",
+                    "type": "Button",
+                    "id": "213e9bd3-8e5a-43d7-9666-82c1d0f33663",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -647,11 +674,44 @@
                 {
                     "name": "",
                     "id": "b90b282d-369f-4794-a941-66d0c848f7dd",
-                    "path": "<Keyboard>/c",
+                    "path": "<Keyboard>/o",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
                     "action": "CancelUseItem",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "dfb336f2-7369-414c-87d6-53db5dd0a614",
+                    "path": "<Keyboard>/tab",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "OpenItemWheel",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "2b24e1d0-fb8c-4ab7-9c20-53c402388ae5",
+                    "path": "<Keyboard>/u",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Detonate",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "44d81caa-b7c6-4ea5-b7f2-b8612288961c",
+                    "path": "<Keyboard>/r",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "RevivePlayer",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

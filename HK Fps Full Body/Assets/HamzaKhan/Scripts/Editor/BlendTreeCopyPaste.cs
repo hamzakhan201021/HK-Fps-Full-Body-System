@@ -61,7 +61,7 @@ public class BlendTreeCopyPaste : MonoBehaviour
         return Application.dataPath.Substring(0, Application.dataPath.Length - "Assets".Length) + _workDir + "log.txt";
     }
     //========================================================
-    [MenuItem("Tools/AnimTools/Blend Tree/Copy Tree")]
+    [MenuItem("Tools/HK Fps/AnimTools/Blend Tree/Copy Tree")]
     static void CopyBlendTree()
     {
         int notCopied = 0;
@@ -107,7 +107,7 @@ public class BlendTreeCopyPaste : MonoBehaviour
         _treePath = oldpath;
     }
     //========================================================
-    [MenuItem("Tools/AnimTools/Blend Tree/Paste")]
+    [MenuItem("Tools/HK Fps/AnimTools/Blend Tree/Paste")]
     static void PasteBlendTree()
     {
         try
@@ -149,7 +149,7 @@ public class BlendTreeCopyPaste : MonoBehaviour
         bt.blendParameterY = paste.blendParameterY;
     }
     //========================================================
-    [MenuItem("Tools/AnimTools/Blend Tree/Delete Trees")]
+    [MenuItem("Tools/HK Fps/AnimTools/Blend Tree/Delete Trees")]
     public static void deleteBlendTrees()
     {
         List<BlendTree> bts = getBlendTreesFromSelection();
@@ -163,6 +163,7 @@ public class BlendTreeCopyPaste : MonoBehaviour
     public static List<BlendTree> getBlendTreesFromSelection()
     {
         List<BlendTree> blendTrees = new List<BlendTree>();
+
         foreach (Object obj in Selection.objects)
         {
             BlendTree bt = obj as BlendTree;
@@ -179,6 +180,7 @@ public class BlendTreeCopyPaste : MonoBehaviour
                 blendTrees.Add(bt);
             }
         }
+
         return blendTrees;
     }
 }
