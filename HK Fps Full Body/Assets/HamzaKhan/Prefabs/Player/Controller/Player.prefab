@@ -4626,7 +4626,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3056830386022768018}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -5010,7 +5010,6 @@ MonoBehaviour:
   _constantStaminaIncreaseRate: 10
   _sprintingStaminaDecreaseRate: 25
   _increaseStaminaWhenDecreasing: 0
-  _animator: {fileID: 8564381958428626180}
   _ragdollRigidbodies:
   - {fileID: 8104509200800628261}
   - {fileID: 5075978616796927969}
@@ -9504,7 +9503,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6251649987243402211}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 7.275958e-11, z: 9.6406445e-11, w: 1}
+  m_LocalRotation: {x: -0.000000007450581, y: 4.3655746e-11, z: -3.7016434e-10, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -9675,7 +9674,7 @@ GameObject:
   - component: {fileID: 8254789608197988798}
   - component: {fileID: 9084654119643733127}
   m_Layer: 15
-  m_Name: LeftLegHitBox
+  m_Name: RightLegHitBox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10917,7 +10916,7 @@ GameObject:
   - component: {fileID: 6078700654197938883}
   - component: {fileID: 1354834277445098044}
   m_Layer: 15
-  m_Name: LeftFootHitBox
+  m_Name: RightFootHitBox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11437,7 +11436,6 @@ GameObject:
   - component: {fileID: 3666176476400509581}
   - component: {fileID: 4717977365579086028}
   - component: {fileID: 8104509200800628261}
-  - component: {fileID: 3860821365592346677}
   m_Layer: 14
   m_Name: mixamorig:Hips
   m_TagString: Untagged
@@ -11512,24 +11510,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 2
---- !u!114 &3860821365592346677
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7233708180615120631}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cc1356311158b46aa843326f0dfdabe4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  HKPlayerHealthSystem: {fileID: 1128481972199656519}
-  EffectPrefab: {fileID: 1000010191825552, guid: 83e55d3418297934fab882559d009285,
-    type: 3}
-  EffectScale: {x: 1, y: 1, z: 1}
-  HealthCut: 40
-  BodyPart: 1
 --- !u!1 &7258804687295838895
 GameObject:
   m_ObjectHideFlags: 0
@@ -11555,7 +11535,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7258804687295838895}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 7.275958e-11, z: 9.6406445e-11, w: 1}
+  m_LocalRotation: {x: -0.000000007450581, y: 4.3655746e-11, z: -3.7016434e-10, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -12093,7 +12073,7 @@ MonoBehaviour:
     type: 3}
   EffectScale: {x: 1, y: 1, z: 1}
   HealthCut: 40
-  BodyPart: 0
+  BodyPart: 1
 --- !u!1 &7744343047245435542
 GameObject:
   m_ObjectHideFlags: 0
@@ -12163,9 +12143,9 @@ Transform:
   - {fileID: 1554024409411016518}
   - {fileID: 3802998396272896808}
   - {fileID: 1642349109946156550}
-  - {fileID: 6612299921449674170}
-  - {fileID: 3933072477863298340}
   - {fileID: 3842054805857684256}
+  - {fileID: 3933072477863298340}
+  - {fileID: 6612299921449674170}
   m_Father: {fileID: 7852252689818553582}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &174314665556688007
@@ -14132,6 +14112,7 @@ GameObject:
   - component: {fileID: 5391856681819708809}
   - component: {fileID: 8859140765869289265}
   - component: {fileID: 7754691336319219712}
+  - component: {fileID: 3012359901153719691}
   m_Layer: 15
   m_Name: HipHitBox
   m_TagString: Untagged
@@ -14202,6 +14183,24 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 2
+--- !u!114 &3012359901153719691
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9022421507349098689}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc1356311158b46aa843326f0dfdabe4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  HKPlayerHealthSystem: {fileID: 1128481972199656519}
+  EffectPrefab: {fileID: 1000010191825552, guid: 83e55d3418297934fab882559d009285,
+    type: 3}
+  EffectScale: {x: 1, y: 1, z: 1}
+  HealthCut: 40
+  BodyPart: 1
 --- !u!1 &9041387629508059720
 GameObject:
   m_ObjectHideFlags: 0

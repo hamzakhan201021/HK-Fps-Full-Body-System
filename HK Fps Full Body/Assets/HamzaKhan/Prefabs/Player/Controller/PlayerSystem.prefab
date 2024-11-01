@@ -3322,6 +3322,7 @@ MonoBehaviour:
   m_DeselectOnBackgroundClick: 1
   m_PointerBehavior: 0
   m_CursorLockBehavior: 0
+  m_ScrollDeltaPerTick: 6
 --- !u!1 &4034880489056613230
 GameObject:
   m_ObjectHideFlags: 0
@@ -6428,15 +6429,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 3860821365592346677, guid: b5faf9630a062495a93c29c331f58c3e, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 9022421507349098689, guid: b5faf9630a062495a93c29c331f58c3e,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 5960079011688589068}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b5faf9630a062495a93c29c331f58c3e, type: 3}
 --- !u!114 &523354400352949340 stripped
 MonoBehaviour:
@@ -6450,30 +6446,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d56e7e03dd03d48b1b360d9a055a59b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &880072212074118438 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 9022421507349098689, guid: b5faf9630a062495a93c29c331f58c3e,
-    type: 3}
-  m_PrefabInstance: {fileID: 8142703346612800999}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &5960079011688589068
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 880072212074118438}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cc1356311158b46aa843326f0dfdabe4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  HKPlayerHealthSystem: {fileID: 9126999648171000224}
-  EffectPrefab: {fileID: 1000010191825552, guid: 83e55d3418297934fab882559d009285,
-    type: 3}
-  EffectScale: {x: 1, y: 1, z: 1}
-  HealthCut: 40
-  BodyPart: 1
 --- !u!114 &1388646002403871542 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7081285495395780305, guid: b5faf9630a062495a93c29c331f58c3e,

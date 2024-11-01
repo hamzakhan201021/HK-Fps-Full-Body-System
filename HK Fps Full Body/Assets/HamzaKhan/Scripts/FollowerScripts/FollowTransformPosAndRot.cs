@@ -17,12 +17,7 @@ public class FollowTransformPosAndRot : MonoBehaviour
         if (MaintainOffset && Target != null) _rotationOffset = Quaternion.Inverse(Target.rotation) * transform.rotation;
     }
 
-    //void Update()
-    //{
-    //    CalcAndApply();
-    //}
-    // CHANGES
-    void FixedUpdate()
+    private void LateUpdate()
     {
         CalcAndApply();
     }
