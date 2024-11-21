@@ -43,8 +43,8 @@ MonoBehaviour:
   BoxCastSize: {x: 0.06, y: 0.25, z: 0.37}
   BoxCastClippedSize: {x: 0.08, y: 0.27, z: 0.39}
   CameraNormalPosition: {x: -0.09, y: 0.27, z: 0.1}
-  CameraAimingPosition: {x: 0.021, y: 0.26, z: 0.21}
-  CameraClippedPosition: {x: 0.021, y: 0.1, z: 0.21}
+  CameraAimingPosition: {x: 0.01, y: 0.26, z: 0.21}
+  CameraClippedPosition: {x: 0.01, y: 0.26, z: 0.21}
   RecoilX: -100
   RecoilY: 0.4
   RecoilZ: 0.4
@@ -53,5 +53,5 @@ MonoBehaviour:
   CinemachineRecoilImpulse: {x: 0.002, y: 0.002, z: 0.05}
   SwayAmount: 1.5
   SwaySmooth: 5
-  WeaponPositionOffset: {x: 0.2967088, y: 0.1019831, z: 0.4258059}
+  WeaponPositionOffset: {x: 0.01, y: 0.1019831, z: 0.4258059}
   SpineConstraintOffsetY: 0

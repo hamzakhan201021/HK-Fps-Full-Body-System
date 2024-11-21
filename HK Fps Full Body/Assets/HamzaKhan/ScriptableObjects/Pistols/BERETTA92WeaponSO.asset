@@ -43,8 +43,8 @@ MonoBehaviour:
   BoxCastSize: {x: 0.06, y: 0.02, z: 0.37}
   BoxCastClippedSize: {x: 0.08, y: 0.22, z: 0.42}
   CameraNormalPosition: {x: -0.06, y: 0.26, z: 0.15}
-  CameraAimingPosition: {x: 0, y: 0, z: 0}
-  CameraClippedPosition: {x: 0, y: 0, z: 0}
+  CameraAimingPosition: {x: 0.055, y: 0.26, z: 0.3}
+  CameraClippedPosition: {x: 0.055, y: 0.26, z: 0.3}
   RecoilX: -75.42
   RecoilY: 50
   RecoilZ: 20
