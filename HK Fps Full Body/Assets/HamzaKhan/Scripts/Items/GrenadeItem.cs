@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
-using Cinemachine;
+using Unity.Cinemachine;
 
 // CHANGES NEW SCRIPT
 public class GrenadeItem : ItemBase, IThrowable

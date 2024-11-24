@@ -1,7 +1,7 @@
 using UnityEngine.Rendering.Universal;
 using System.Collections;
 using UnityEngine;
-using Cinemachine;
+using Unity.Cinemachine;
 
 public class ScopeEffectManager : MonoBehaviour
 {
@@ -20,11 +20,11 @@ public class ScopeEffectManager : MonoBehaviour
     [Space]
     [Header("Camera")]
     [SerializeField] private Camera _renderCamera;
-    [SerializeField] private CinemachineVirtualCamera _aimingVirtualCamera;
+    [SerializeField] private CinemachineCamera _aimingVirtualCamera;
 
     [SerializeField] private AnimationCurve _cameraBlendingCurve;
 
-    [SerializeField] private CinemachineBlendDefinition.Style _cameraBlendingStyle;
+    [SerializeField] private CinemachineBlendDefinition.Styles _cameraBlendingStyle;
 
     [SerializeField] private float _cameraBlendTime;
     [SerializeField] private float _delayTimeMultiplier = 1.25f;
@@ -189,9 +189,9 @@ public class ScopeEffectManager : MonoBehaviour
     {
         if (_cinemachineCameraBrain == null) return;
 
-        _cinemachineCameraBrain.m_DefaultBlend.m_Time = _cameraBlendTime;
-        _cinemachineCameraBrain.m_DefaultBlend.m_Style = _cameraBlendingStyle;
-        _cinemachineCameraBrain.m_DefaultBlend.m_CustomCurve = _cameraBlendingCurve;
+        _cinemachineCameraBrain.DefaultBlend.Time = _cameraBlendTime;
+        _cinemachineCameraBrain.DefaultBlend.Style = _cameraBlendingStyle;
+        _cinemachineCameraBrain.DefaultBlend.CustomCurve = _cameraBlendingCurve;
     }
 
     #endregion

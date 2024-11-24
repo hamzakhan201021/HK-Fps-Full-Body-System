@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine.Events;
 using UnityEngine;
-using Cinemachine;
+using Unity.Cinemachine;
 
 #if UNITY_EDITOR
 using UnityEditor;

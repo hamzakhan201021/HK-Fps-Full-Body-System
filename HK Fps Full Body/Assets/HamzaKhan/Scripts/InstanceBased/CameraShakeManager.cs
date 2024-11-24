@@ -1,7 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using Cinemachine;
+using Unity.Cinemachine;
 
 public class CameraShakeManager : MonoBehaviour
 {
@@ -20,18 +18,18 @@ public class CameraShakeManager : MonoBehaviour
 
     public void CameraShakeForce(CinemachineImpulseSource impulseSource)
     {
-        impulseListener.m_ReactionSettings.m_AmplitudeGain = 1;
-        impulseListener.m_ReactionSettings.m_FrequencyGain = 1;
-        impulseListener.m_ReactionSettings.m_Duration = 1;
+        impulseListener.ReactionSettings.AmplitudeGain = 1;
+        impulseListener.ReactionSettings.FrequencyGain = 1;
+        impulseListener.ReactionSettings.Duration = 1;
 
         impulseSource.GenerateImpulseWithForce(globalShakeForce);
     }
 
     public void CameraShakeVelocity(CinemachineImpulseSource impulseSource, Vector3 velocity)
     {
-        impulseListener.m_ReactionSettings.m_AmplitudeGain = 1;
-        impulseListener.m_ReactionSettings.m_FrequencyGain = 1;
-        impulseListener.m_ReactionSettings.m_Duration = 1;
+        impulseListener.ReactionSettings.AmplitudeGain = 1;
+        impulseListener.ReactionSettings.FrequencyGain = 1;
+        impulseListener.ReactionSettings.Duration = 1;
 
         impulseSource.GenerateImpulse(velocity);
     }
@@ -45,14 +43,14 @@ public class CameraShakeManager : MonoBehaviour
 
     private void SetupCameraShakeSettings(CameraShakeProfile profile, CinemachineImpulseSource impulseSource)
     {
-        impulseDefinition = impulseSource.m_ImpulseDefinition;
+        impulseDefinition = impulseSource.ImpulseDefinition;
 
-        impulseDefinition.m_ImpulseDuration = profile.ImpulseTime;
-        impulseSource.m_DefaultVelocity = profile.DefaultVelocity;
-        impulseDefinition.m_CustomImpulseShape = profile.impulseCurve;
+        impulseDefinition.ImpulseDuration = profile.ImpulseTime;
+        impulseSource.DefaultVelocity = profile.DefaultVelocity;
+        impulseDefinition.CustomImpulseShape = profile.impulseCurve;
 
-        impulseListener.m_ReactionSettings.m_AmplitudeGain = profile.ListenerAmplitude;
-        impulseListener.m_ReactionSettings.m_FrequencyGain = profile.ListenerFrequency;
-        impulseListener.m_ReactionSettings.m_Duration = profile.ListenerDuration;
+        impulseListener.ReactionSettings.AmplitudeGain = profile.ListenerAmplitude;
+        impulseListener.ReactionSettings.FrequencyGain = profile.ListenerFrequency;
+        impulseListener.ReactionSettings.Duration = profile.ListenerDuration;
     }
 }
