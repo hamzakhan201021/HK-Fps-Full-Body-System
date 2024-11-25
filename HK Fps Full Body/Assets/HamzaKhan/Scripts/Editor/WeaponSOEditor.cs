@@ -1,61 +1,63 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-public class WeaponSOEditorWindow : EditorWindow
+namespace HKFps
 {
-    private Vector3 positionOffset;
-
-    [MenuItem("Tools/HK Fps/Weapon/Weapon Offset Setter")]
-    public static void ShowWindow()
+    public class WeaponSOEditorWindow : EditorWindow
     {
-        GetWindow<WeaponSOEditorWindow>("Weapon Offset Setter");
-    }
+        private Vector3 positionOffset;
 
-    private void OnGUI()
-    {
-        GUILayout.Label("Set Weapon Position Offset", EditorStyles.boldLabel);
-
-        // Field to enter the offset value
-        positionOffset = EditorGUILayout.Vector3Field("Position Offset", positionOffset);
-
-        if (GUILayout.Button("Set Offset for All Weapons"))
+        [MenuItem("Tools/HK Fps/Weapon/Weapon Offset Setter")]
+        public static void ShowWindow()
         {
-            SetWeaponOffsets();
+            GetWindow<WeaponSOEditorWindow>("Weapon Offset Setter");
         }
-    }
 
-    private void SetWeaponOffsets()
-    {
-        // Find all assets of type WeaponSO
-        string[] guids = AssetDatabase.FindAssets("t:WeaponSO");
-        List<WeaponSO> weaponSOs = new List<WeaponSO>();
-
-        foreach (string guid in guids)
+        private void OnGUI()
         {
-            string path = AssetDatabase.GUIDToAssetPath(guid);
-            WeaponSO weaponSO = AssetDatabase.LoadAssetAtPath<WeaponSO>(path);
+            GUILayout.Label("Set Weapon Position Offset", EditorStyles.boldLabel);
 
-            if (weaponSO != null)
+            // Field to enter the offset value
+            positionOffset = EditorGUILayout.Vector3Field("Position Offset", positionOffset);
+
+            if (GUILayout.Button("Set Offset for All Weapons"))
             {
-                weaponSOs.Add(weaponSO);
+                SetWeaponOffsets();
             }
         }
 
-        // Modify the WeaponPositionOffset for each WeaponSO
-        foreach (var weaponSO in weaponSOs)
+        private void SetWeaponOffsets()
         {
-            Undo.RecordObject(weaponSO, "Weapon SO BULK UPDATE");
-            //weaponSO.WeaponPositionOffset += positionOffset;
-            weaponSO.NewPosition += positionOffset;
-            EditorUtility.SetDirty(weaponSO);
+            // Find all assets of type WeaponSO
+            string[] guids = AssetDatabase.FindAssets("t:WeaponSO");
+            List<WeaponSO> weaponSOs = new List<WeaponSO>();
+
+            foreach (string guid in guids)
+            {
+                string path = AssetDatabase.GUIDToAssetPath(guid);
+                WeaponSO weaponSO = AssetDatabase.LoadAssetAtPath<WeaponSO>(path);
+
+                if (weaponSO != null)
+                {
+                    weaponSOs.Add(weaponSO);
+                }
+            }
+
+            // Modify the WeaponPositionOffset for each WeaponSO
+            foreach (var weaponSO in weaponSOs)
+            {
+                Undo.RecordObject(weaponSO, "Weapon SO BULK UPDATE");
+                //weaponSO.WeaponPositionOffset += positionOffset;
+                weaponSO.NewPosition += positionOffset;
+                EditorUtility.SetDirty(weaponSO);
+            }
+
+            // Save all modified assets
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+
+            Debug.Log($"Updated {weaponSOs.Count} WeaponSO assets with new position offset.");
         }
-
-        // Save all modified assets
-        AssetDatabase.SaveAssets();
-        AssetDatabase.Refresh();
-
-        Debug.Log($"Updated {weaponSOs.Count} WeaponSO assets with new position offset.");
     }
 }

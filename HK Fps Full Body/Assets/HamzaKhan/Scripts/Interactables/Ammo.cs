@@ -1,40 +1,28 @@
 using UnityEngine;
 
-public class Ammo : MonoBehaviour, IInteractable
+namespace HKFps
 {
-
-    [Header("Ammo Settings")]
-    [SerializeField] private int _totalAmmo = 90;
-    [SerializeField] private string _interactMessage;
-
-    // CHANGES (
-    //public void Interact(PlayerController playerController)
-    //{
-    //    playerController.CurrentWeapon().TotalAmmo += _totalAmmo;
-    //    Destroy(gameObject);
-    //}
-
-    public void Interact(HKPlayerInteractionBase playerController)
+    public class Ammo : MonoBehaviour, IInteractable
     {
-        playerController.AddAmmo(_totalAmmo);
-        Destroy(gameObject);
-    }
-    // CHANGES )
 
-    // CHANGES (
-    //public bool CanInteract(PlayerController playerController)
-    //{
-    //    return true;
-    //}
+        [Header("Ammo Settings")]
+        [SerializeField] private int _totalAmmo = 90;
+        [SerializeField] private string _interactMessage;
 
-    public bool CanInteract(HKPlayerInteractionBase interactionController)
-    {
-        return true;
-    }
-    // CHANGES )
+        public void Interact(HKPlayerInteractionBase playerController)
+        {
+            playerController.AddAmmo(_totalAmmo);
+            Destroy(gameObject);
+        }
 
-    public string GetMessage()
-    {
-        return _interactMessage;
+        public bool CanInteract(HKPlayerInteractionBase interactionController)
+        {
+            return true;
+        }
+
+        public string GetMessage()
+        {
+            return _interactMessage;
+        }
     }
 }

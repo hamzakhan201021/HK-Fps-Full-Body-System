@@ -1,14 +1,17 @@
 using UnityEngine;
 
-public class FollowTransformPos : MonoBehaviour
+namespace HKFps
 {
-
-    public Transform Target;
-    public Vector3 Offset;
-
-    // Update is called once per frame
-    void Update()
+    public class FollowTransformPos : MonoBehaviour
     {
-        transform.position = Target.position + Offset;
+
+        public Transform Target;
+        public Vector3 Offset;
+
+        // Update is called once per frame
+        void Update()
+        {
+            transform.position = Target.position + Offset;
+        }
     }
 }

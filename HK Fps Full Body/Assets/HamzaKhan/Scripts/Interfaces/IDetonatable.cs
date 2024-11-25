@@ -1,4 +1,7 @@
-public interface IDetonatable
+namespace HKFps
 {
-    void TriggerDetonation();
+    public interface IDetonatable
+    {
+        void TriggerDetonation();
+    }
 }

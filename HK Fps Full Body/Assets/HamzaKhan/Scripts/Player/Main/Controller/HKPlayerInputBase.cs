@@ -1,6 +1,9 @@
 using UnityEngine;
 
-public abstract class HKPlayerInputBase : MonoBehaviour
+namespace HKFps
 {
-    public abstract PlayerInputActions GetInputActions();
+    public abstract class HKPlayerInputBase : MonoBehaviour
+    {
+        public abstract PlayerInputActions GetInputActions();
+    }
 }

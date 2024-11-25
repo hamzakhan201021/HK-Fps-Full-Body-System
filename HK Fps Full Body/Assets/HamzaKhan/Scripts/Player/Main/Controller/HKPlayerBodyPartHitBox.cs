@@ -1,29 +1,32 @@
 using UnityEngine;
 
-public class HKPlayerBodyPartHitBox : MonoBehaviour, IHitable
+namespace HKFps
 {
-
-    [Space]
-    [Header("Main")]
-    public HKPlayerHealthSystem HKPlayerHealthSystem;
-    public GameObject EffectPrefab;
-    public Vector3 EffectScale = Vector3.one;
-    [Header("Health")]
-    public float HealthCut;
-    public BodyPart BodyPart;
-
-    public void Hit(GameObject hitObject, Vector3 hitPoint, Vector3 hitNormal, HealthDamageData healthDamageData)
+    public class HKPlayerBodyPartHitBox : MonoBehaviour, IHitable
     {
-        // Damage player
-        HKPlayerHealthSystem.BodyReceiveDamage(healthDamageData, BodyPart, HealthCut);
 
-        // Create effect
-        GameObject effect = Instantiate(EffectPrefab, hitPoint, Quaternion.LookRotation(hitNormal));
+        [Space]
+        [Header("Main")]
+        public HKPlayerHealthSystem HKPlayerHealthSystem;
+        public GameObject EffectPrefab;
+        public Vector3 EffectScale = Vector3.one;
+        [Header("Health")]
+        public float HealthCut;
+        public BodyPart BodyPart;
 
-        effect.transform.localScale = EffectScale;
+        public void Hit(GameObject hitObject, Vector3 hitPoint, Vector3 hitNormal, HealthDamageData healthDamageData)
+        {
+            // Damage player
+            HKPlayerHealthSystem.BodyReceiveDamage(healthDamageData, BodyPart, HealthCut);
 
-        effect.transform.Rotate(transform.forward, Random.Range(0, 360));
+            // Create effect
+            GameObject effect = Instantiate(EffectPrefab, hitPoint, Quaternion.LookRotation(hitNormal));
 
-        effect.transform.SetParent(transform);
+            effect.transform.localScale = EffectScale;
+
+            effect.transform.Rotate(transform.forward, Random.Range(0, 360));
+
+            effect.transform.SetParent(transform);
+        }
     }
 }

@@ -1,25 +1,28 @@
-public class HKPlayerInput : HKPlayerInputBase
+namespace HKFps
 {
-
-    private PlayerInputActions _playerInputActions;
-
-    void Awake()
+    public class HKPlayerInput : HKPlayerInputBase
     {
-        _playerInputActions = new PlayerInputActions();
-        _playerInputActions.Enable();
-    }
 
-    public override PlayerInputActions GetInputActions()
-    {
-        return _playerInputActions;
-    }
+        private PlayerInputActions _playerInputActions;
 
-    private void OnEnable()
-    {
-        _playerInputActions.Enable();
-    }
-    private void OnDisable()
-    {
-        _playerInputActions.Disable();
+        void Awake()
+        {
+            _playerInputActions = new PlayerInputActions();
+            _playerInputActions.Enable();
+        }
+
+        public override PlayerInputActions GetInputActions()
+        {
+            return _playerInputActions;
+        }
+
+        private void OnEnable()
+        {
+            _playerInputActions.Enable();
+        }
+        private void OnDisable()
+        {
+            _playerInputActions.Disable();
+        }
     }
 }

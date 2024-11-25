@@ -1,25 +1,28 @@
 using Unity.Cinemachine;
 using UnityEngine;
 
-[RequireComponent(typeof(CinemachineBrain))]
-public class CinemachineBrainInstance : MonoBehaviour
+namespace HKFps
 {
-
-    // Instance
-    public static CinemachineBrainInstance Instance;
-
-    private void Awake()
+    [RequireComponent(typeof(CinemachineBrain))]
+    public class CinemachineBrainInstance : MonoBehaviour
     {
-        // Set the Instance.
-        Instance = this;
-    }
 
-    /// <summary>
-    /// When using this, make sure to cache reference, because it uses Get Component
-    /// </summary>
-    /// <returns></returns>
-    public CinemachineBrain GetCinemachineBrain()
-    {
-        return GetComponent<CinemachineBrain>();
+        // Instance
+        public static CinemachineBrainInstance Instance;
+
+        private void Awake()
+        {
+            // Set the Instance.
+            Instance = this;
+        }
+
+        /// <summary>
+        /// When using this, make sure to cache reference, because it uses Get Component
+        /// </summary>
+        /// <returns></returns>
+        public CinemachineBrain GetCinemachineBrain()
+        {
+            return GetComponent<CinemachineBrain>();
+        }
     }
 }

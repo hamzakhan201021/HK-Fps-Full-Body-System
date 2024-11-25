@@ -1,4 +1,7 @@
-public interface IDamageable
+namespace HKFps
 {
-    void Damage(float damageAmount);
+    public interface IDamageable
+    {
+        void Damage(float damageAmount);
+    }
 }

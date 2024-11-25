@@ -2,70 +2,73 @@ using System.Collections.Generic;
 using UnityEngine.Events;
 using UnityEngine;
 
-public class HKPlayerInventory : MonoBehaviour
+namespace HKFps
 {
-
-    [Space]
-    [Tooltip("Inventory")]
-    public List<InventoryItem> Items;
-    public int DefaultSelectedIndex;
-
-    [Space]
-    public Transform ItemsParent;
-
-    private InventoryItem _currentItem;
-
-    [Space]
-    [Header("Events")]
-    [Space]
-    public UnityEvent OnAddNewItemComplete;
-    public UnityEvent<InventoryItem> OnSelectItem;
-
-    void Awake()
+    public class HKPlayerInventory : MonoBehaviour
     {
-        _currentItem = Items[0];
-    }
 
-    public InventoryItem CurrentInventoryItem()
-    {
-        return _currentItem;
-    }
+        [Space]
+        [Tooltip("Inventory")]
+        public List<InventoryItem> Items;
+        public int DefaultSelectedIndex;
 
-    public void OnAddNewItem(ItemBase item, int amount = 1)
-    {
-        for (int i = 0; i < Items.Count; i++)
+        [Space]
+        public Transform ItemsParent;
+
+        private InventoryItem _currentItem;
+
+        [Space]
+        [Header("Events")]
+        [Space]
+        public UnityEvent OnAddNewItemComplete;
+        public UnityEvent<InventoryItem> OnSelectItem;
+
+        void Awake()
         {
-            if (Items[i].Item.ItemType == item.ItemType)
-            {
-                Items[i].Amount += amount;
-
-                Destroy(item.gameObject);
-
-                OnAddNewItemComplete.Invoke();
-
-                return;
-            }
+            _currentItem = Items[0];
         }
 
-        // If the Default Loadout doesn't have it yet, Create a new Inventory Item.
-        InventoryItem inventoryItem = new InventoryItem();
+        public InventoryItem CurrentInventoryItem()
+        {
+            return _currentItem;
+        }
 
-        inventoryItem.Item = item;
-        inventoryItem.Amount = amount;
+        public void OnAddNewItem(ItemBase item, int amount = 1)
+        {
+            for (int i = 0; i < Items.Count; i++)
+            {
+                if (Items[i].Item.ItemType == item.ItemType)
+                {
+                    Items[i].Amount += amount;
 
-        Items.Add(inventoryItem);
+                    Destroy(item.gameObject);
 
-        item.transform.SetParent(ItemsParent);
-        item.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
-        item.gameObject.SetActive(false);
+                    OnAddNewItemComplete.Invoke();
 
-        OnAddNewItemComplete.Invoke();
-    }
+                    return;
+                }
+            }
 
-    public void SelectItem(InventoryItem item)
-    {
-        _currentItem = item;
+            // If the Default Loadout doesn't have it yet, Create a new Inventory Item.
+            InventoryItem inventoryItem = new InventoryItem();
 
-        OnSelectItem.Invoke(item);
+            inventoryItem.Item = item;
+            inventoryItem.Amount = amount;
+
+            Items.Add(inventoryItem);
+
+            item.transform.SetParent(ItemsParent);
+            item.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
+            item.gameObject.SetActive(false);
+
+            OnAddNewItemComplete.Invoke();
+        }
+
+        public void SelectItem(InventoryItem item)
+        {
+            _currentItem = item;
+
+            OnSelectItem.Invoke(item);
+        }
     }
 }

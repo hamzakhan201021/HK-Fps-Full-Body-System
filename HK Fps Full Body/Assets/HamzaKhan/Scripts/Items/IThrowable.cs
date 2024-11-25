@@ -1,7 +1,9 @@
-using UnityEngine.Events;
 using UnityEngine;
 
-public interface IThrowable
+namespace HKFps
 {
-    void ThrowObj(HKPlayerItemSystem controller, Transform releasePosition, float force);
+    public interface IThrowable
+    {
+        void ThrowObj(HKPlayerItemSystem controller, Transform releasePosition, float force);
+    }
 }

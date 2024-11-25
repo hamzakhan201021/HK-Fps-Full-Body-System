@@ -1,103 +1,105 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.Animations.Rigging;
 using UnityEngine;
 using System;
 
-public class ConstraintsWeightModifier : MonoBehaviour
+namespace HKFps
 {
-
-
-    [Header("The Weight For All The Constraints Assigned in the List")]
-    [Range(0, 1)]
-    [SerializeField] private float _weight = 1.0f;
-
-    // List to hold GameObjects
-    [SerializeField] private List<GameObject> _iKConstraints = new List<GameObject>();
-
-    // Internal list to hold the actual constraint components
-    private List<IRigConstraint> _rigConstraints = new List<IRigConstraint>();
-    private List<ICustomConstraints> _customConstraints = new List<ICustomConstraints>();
-
-    void Start()
+    public class ConstraintsWeightModifier : MonoBehaviour
     {
-        // Initialize Constraints.
-        InitializeConstraints();
-    }
 
-    void Update()
-    {
-        // Loop through each of the rig constraint.
-        for (int i = 0; i < _rigConstraints.Count; i++)
+
+        [Header("The Weight For All The Constraints Assigned in the List")]
+        [Range(0, 1)]
+        [SerializeField] private float _weight = 1.0f;
+
+        // List to hold GameObjects
+        [SerializeField] private List<GameObject> _iKConstraints = new List<GameObject>();
+
+        // Internal list to hold the actual constraint components
+        private List<IRigConstraint> _rigConstraints = new List<IRigConstraint>();
+        private List<ICustomConstraints> _customConstraints = new List<ICustomConstraints>();
+
+        void Start()
         {
-            // Check if the constrant isn't null.
-            if (_rigConstraints[i] != null)
-            {
-                // Set the weight property
-                _rigConstraints[i].weight = _weight;
-            }
+            // Initialize Constraints.
+            InitializeConstraints();
         }
 
-        // Loop through each of the custom constraint.
-        for (int i = 0; i < _customConstraints.Count; i++)
+        void Update()
         {
-            // Check if the constrant isn't null.
-            if (_customConstraints[i] != null)
+            // Loop through each of the rig constraint.
+            for (int i = 0; i < _rigConstraints.Count; i++)
             {
-                // Set the weight property
-                _customConstraints[i].SetWeight(_weight);
+                // Check if the constrant isn't null.
+                if (_rigConstraints[i] != null)
+                {
+                    // Set the weight property
+                    _rigConstraints[i].weight = _weight;
+                }
             }
-        }
-    }
 
-    /// <summary>
-    /// Initializes the Constraints.
-    /// </summary>
-    private void InitializeConstraints()
-    {
-        // Clear the Contraints List.
-        _rigConstraints.Clear();
-
-        // Loop through all objects.
-        for (int i = 0; i < _iKConstraints.Count; i++)
-        {
-            if (_iKConstraints[i] != null)
+            // Loop through each of the custom constraint.
+            for (int i = 0; i < _customConstraints.Count; i++)
             {
-                var rigConstraint = _iKConstraints[i].GetComponent<IRigConstraint>();
-                if (rigConstraint != null)
+                // Check if the constrant isn't null.
+                if (_customConstraints[i] != null)
                 {
-                    _rigConstraints.Add(rigConstraint);
-                }
-                else if (_iKConstraints[i].GetComponent<ICustomConstraints>() != null)
-                {
-                    var customConstraint = _iKConstraints[i].GetComponent<ICustomConstraints>();
-                    _customConstraints.Add(customConstraint);
-                }
-                else
-                {
-                    Debug.LogWarning($"GameObject {_iKConstraints[i].name} does not have a constraint component.");
+                    // Set the weight property
+                    _customConstraints[i].SetWeight(_weight);
                 }
             }
         }
-    }
 
-    public float GetWeight()
-    {
-        return _weight;
-    }
+        /// <summary>
+        /// Initializes the Constraints.
+        /// </summary>
+        private void InitializeConstraints()
+        {
+            // Clear the Contraints List.
+            _rigConstraints.Clear();
 
-    public void SetWeight(float weight)
-    {
-        this._weight = weight;
-    }
+            // Loop through all objects.
+            for (int i = 0; i < _iKConstraints.Count; i++)
+            {
+                if (_iKConstraints[i] != null)
+                {
+                    var rigConstraint = _iKConstraints[i].GetComponent<IRigConstraint>();
+                    if (rigConstraint != null)
+                    {
+                        _rigConstraints.Add(rigConstraint);
+                    }
+                    else if (_iKConstraints[i].GetComponent<ICustomConstraints>() != null)
+                    {
+                        var customConstraint = _iKConstraints[i].GetComponent<ICustomConstraints>();
+                        _customConstraints.Add(customConstraint);
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"GameObject {_iKConstraints[i].name} does not have a constraint component.");
+                    }
+                }
+            }
+        }
 
-    public List<IRigConstraint> GetAffectedRigConstraints()
-    {
-        return _rigConstraints;
-    }
+        public float GetWeight()
+        {
+            return _weight;
+        }
 
-    public List<ICustomConstraints> GetAffectedCustomConstraints()
-    {
-        return _customConstraints;
+        public void SetWeight(float weight)
+        {
+            this._weight = weight;
+        }
+
+        public List<IRigConstraint> GetAffectedRigConstraints()
+        {
+            return _rigConstraints;
+        }
+
+        public List<ICustomConstraints> GetAffectedCustomConstraints()
+        {
+            return _customConstraints;
+        }
     }
 }

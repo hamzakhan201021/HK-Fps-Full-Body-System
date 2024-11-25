@@ -1,6 +1,9 @@
-﻿public interface ICustomConstraints
+﻿namespace HKFps
 {
-	void SetWeight(float weight);
+	public interface ICustomConstraints
+	{
+		void SetWeight(float weight);
 
-	float GetWeight();
+		float GetWeight();
+	}
 }

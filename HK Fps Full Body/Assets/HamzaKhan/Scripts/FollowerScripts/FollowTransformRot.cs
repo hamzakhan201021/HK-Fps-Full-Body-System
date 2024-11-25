@@ -1,17 +1,20 @@
 using UnityEngine;
 
-public class FollowTransformRot : MonoBehaviour
+namespace HKFps
 {
-
-    public Transform Target;
-    public Vector3 Offset;
-
-    // Update is called once per frame
-    void Update()
+    public class FollowTransformRot : MonoBehaviour
     {
-        if (Target != null)
+
+        public Transform Target;
+        public Vector3 Offset;
+
+        // Update is called once per frame
+        void Update()
         {
-            transform.rotation = Target.rotation * Quaternion.Euler(Offset);
+            if (Target != null)
+            {
+                transform.rotation = Target.rotation * Quaternion.Euler(Offset);
+            }
         }
     }
 }

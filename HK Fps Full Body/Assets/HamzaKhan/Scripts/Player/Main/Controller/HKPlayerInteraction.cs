@@ -1,133 +1,127 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-public class HKPlayerInteraction : HKPlayerInteractionBase
+namespace HKFps
 {
-
-    [Space]
-    [Header("Weapon Manager")]
-    [SerializeField] private HKPlayerWeaponManager _hKPlayerWeaponManager;
-
-    [Space]
-    [Header("Interactions")]
-    [SerializeField] private Transform _interactPointer;
-    [SerializeField] private LayerMask _interactableLayerMask;
-    [SerializeField] private float _interactMaxDistance = 1;
-    [SerializeField] private int detectInteractableInterval = 30;
-
-    [Space]
-    [Header("Events")]
-    [Space]
-    public UnityEvent OnSwapEvent;
-    public UnityEvent<ItemBase, int> OnAddNewItemEvent;
-    public UnityEvent<WeaponBase> OnPickNewWeaponEvent;
-    public UnityEvent<int> OnAddAmmoEvent;
-    public UnityEvent<bool, IInteractable> OnUpdateInteractUIEvent;
-
-    private WeaponBase _interactedNewWeapon = null;
-    private IInteractable _detectedInteractable;
-    private bool _isInInteractionRange = false;
-
-    public override void UpdatePlayerInteractions(bool reloading, bool interactTriggered)
+    public class HKPlayerInteraction : HKPlayerInteractionBase
     {
-        if (Time.frameCount % detectInteractableInterval == 0) DetectInteractable(reloading);
 
-        InteractInputCheck(interactTriggered);
-    }
+        [Space]
+        [Header("Weapon Manager")]
+        [SerializeField] private HKPlayerWeaponManager _hKPlayerWeaponManager;
 
-    private void DetectInteractable(bool reloading)
-    {
-        //if (!_currentWeapon._isReloading && Physics.Raycast(_interactPointer.position, _interactPointer.forward,
-        //    out RaycastHit hit, _interactMaxDistance, _interactableLayerMask) &&
-        //    hit.transform.TryGetComponent(out _detectedInteractable))
-        if (!reloading && Physics.Raycast(_interactPointer.position, _interactPointer.forward,
-            out RaycastHit hit, _interactMaxDistance, _interactableLayerMask) &&
-            hit.transform.TryGetComponent(out _detectedInteractable))
+        [Space]
+        [Header("Interactions")]
+        [SerializeField] private Transform _interactPointer;
+        [SerializeField] private LayerMask _interactableLayerMask;
+        [SerializeField] private float _interactMaxDistance = 1;
+        [SerializeField] private int detectInteractableInterval = 30;
+
+        [Space]
+        [Header("Events")]
+        [Space]
+        public UnityEvent OnSwapEvent;
+        public UnityEvent<ItemBase, int> OnAddNewItemEvent;
+        public UnityEvent<WeaponBase> OnPickNewWeaponEvent;
+        public UnityEvent<int> OnAddAmmoEvent;
+        public UnityEvent<bool, IInteractable> OnUpdateInteractUIEvent;
+
+        private WeaponBase _interactedNewWeapon = null;
+        private IInteractable _detectedInteractable;
+        private bool _isInInteractionRange = false;
+
+        public override void UpdatePlayerInteractions(bool reloading, bool interactTriggered)
         {
-            if (!_detectedInteractable.CanInteract(this)) return;
+            if (Time.frameCount % detectInteractableInterval == 0) DetectInteractable(reloading);
 
-            HandleInteractUIState(true, _detectedInteractable);
+            InteractInputCheck(interactTriggered);
         }
-        else
+
+        private void DetectInteractable(bool reloading)
         {
-            HandleInteractUIState(false);
-        }
-    }
+            if (!reloading && Physics.Raycast(_interactPointer.position, _interactPointer.forward,
+                out RaycastHit hit, _interactMaxDistance, _interactableLayerMask) &&
+                hit.transform.TryGetComponent(out _detectedInteractable))
+            {
+                if (!_detectedInteractable.CanInteract(this)) return;
 
-    private void InteractInputCheck(bool interactTriggered)
-    {
-        //if (_isInInteractionRange && Input.Player.Interact.triggered)
-        if (_isInInteractionRange && interactTriggered)
+                HandleInteractUIState(true, _detectedInteractable);
+            }
+            else
+            {
+                HandleInteractUIState(false);
+            }
+        }
+
+        private void InteractInputCheck(bool interactTriggered)
         {
-            _detectedInteractable.Interact(this);
+            //if (_isInInteractionRange && Input.Player.Interact.triggered)
+            if (_isInInteractionRange && interactTriggered)
+            {
+                _detectedInteractable.Interact(this);
+            }
         }
-    }
-    private void HandleInteractUIState(bool state, IInteractable interactable = null)
-    {
-        OnUpdateInteractUIEvent.Invoke(state, interactable);
+        private void HandleInteractUIState(bool state, IInteractable interactable = null)
+        {
+            OnUpdateInteractUIEvent.Invoke(state, interactable);
 
-        _isInInteractionRange = state;
-    }
+            _isInInteractionRange = state;
+        }
 
-    public override void SwapWeapon(WeaponBase newWeapon)
-    {
-        _interactedNewWeapon = newWeapon;
-        OnSwapEvent.Invoke();
-        //animToPlayID = _swapWeaponID;
+        public override void SwapWeapon(WeaponBase newWeapon)
+        {
+            _interactedNewWeapon = newWeapon;
+            OnSwapEvent.Invoke();
+        }
 
-        //UpdateSwitchingInputPerformed(true);
-        //UpdateSwitchingState(true);
-        //MoveWeaponToRightHandSlot(false);
-        //PerformWeaponSwitchAnimation();
-    }
+        public override void AddNewItem(ItemBase item, int amount = 1)
+        {
+            OnAddNewItemEvent.Invoke(item, amount);
+        }
 
-    public override void AddNewItem(ItemBase item, int amount = 1)
-    {
-        OnAddNewItemEvent.Invoke(item, amount);
-    }
+        public override void PickNewWeapon()
+        {
+            OnPickNewWeaponEvent.Invoke(_interactedNewWeapon);
+        }
 
-    public override void PickNewWeapon()
-    {
-        OnPickNewWeaponEvent.Invoke(_interactedNewWeapon);
-    }
+        public override void AddAmmo(int ammoToAdd)
+        {
+            OnAddAmmoEvent.Invoke(ammoToAdd);
+        }
 
-    public override void AddAmmo(int ammoToAdd)
-    {
-        OnAddAmmoEvent.Invoke(ammoToAdd);
-    }
+        public override UnityEvent OnSwap()
+        {
+            return OnSwapEvent;
+        }
 
-    public override UnityEvent OnSwap()
-    {
-        return OnSwapEvent;
-    }
+        public override UnityEvent<ItemBase, int> OnAddNewItem()
+        {
+            return OnAddNewItemEvent;
+        }
 
-    public override UnityEvent<ItemBase, int> OnAddNewItem()
-    {
-        return OnAddNewItemEvent;
-    }
+        public override UnityEvent<WeaponBase> OnPickNewWeapon()
+        {
+            return OnPickNewWeaponEvent;
+        }
 
-    public override UnityEvent<WeaponBase> OnPickNewWeapon()
-    {
-        return OnPickNewWeaponEvent;
-    }
+        public override UnityEvent<int> OnAddAmmo()
+        {
+            return OnAddAmmoEvent;
+        }
 
-    public override UnityEvent<int> OnAddAmmo()
-    {
-        return OnAddAmmoEvent;
-    }
+        public override UnityEvent<bool, IInteractable> OnUpdateInteractUI()
+        {
+            return OnUpdateInteractUIEvent;
+        }
 
-    public override UnityEvent<bool, IInteractable> OnUpdateInteractUI()
-    {
-        return OnUpdateInteractUIEvent;
-    }
+        public override bool IsInInteractionRange()
+        {
+            return _isInInteractionRange;
+        }
 
-    public override bool IsInInteractionRange()
-    {
-        return _isInInteractionRange;
-    }
-
-    public override WeaponBase CurrentWeapon()
-    {
-        return _hKPlayerWeaponManager.CurrentWeapon();
+        public override WeaponBase CurrentWeapon()
+        {
+            return _hKPlayerWeaponManager.CurrentWeapon();
+        }
     }
 }
