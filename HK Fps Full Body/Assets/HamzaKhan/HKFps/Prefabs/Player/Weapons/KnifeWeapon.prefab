@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4297982424699837612}
   - component: {fileID: 4429941347477101765}
   - component: {fileID: 6846528671419619517}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: KnifeHeld
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -60,6 +60,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -115,7 +118,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8630188482303084930}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: LeftHandThumb2ConstraintTarget
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -147,7 +150,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1187542416399424983}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: LeftHandRing2ConstraintTarget
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -179,7 +182,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 275097998470711821}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: LeftHandThumb3ConstraintTarget
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -210,7 +213,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7984386378071727389}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: LeftHandIndex2ConstraintTarget
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -242,7 +245,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3142015238270617709}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: LeftHandIndex3ConstraintTarget
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -273,7 +276,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5741517009511223745}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: RightHandIndex2ConstraintTarget
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -305,7 +308,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5850640515567720800}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: RightHandPinky2ConstraintTarget
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -337,7 +340,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8451708004237367866}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: LeftHandMiddle2ConstraintTarget
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -369,7 +372,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2256599514847894510}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: RightHandMiddle3ConstraintTarget
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -400,7 +403,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7450401144623702004}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: RightHandPinky1ConstraintTarget
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -432,7 +435,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3732523958810397266}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: RightHandMiddle1ConstraintTarget
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -464,7 +467,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 774954960825406361}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: RightHandRing3ConstraintTarget
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -495,7 +498,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4878707395587156371}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: HandsIKTargets
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -528,7 +531,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7060571675937899110}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: RightHandThumb3ConstraintTarget
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -559,7 +562,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1272512834819834387}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: RightHandMiddle2ConstraintTarget
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -591,7 +594,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2137801513204835604}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: LeftHandRing1ConstraintTarget
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -623,7 +626,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4387858751922061303}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: LeftHandIKTarget
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -659,7 +662,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2997436317812859080}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: RightHandRing1ConstraintTarget
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -691,7 +694,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8062408610552081121}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: LeftHandPinky1ConstraintTarget
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -723,7 +726,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7717788301533455810}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: LeftHandMiddle3ConstraintTarget
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -783,7 +786,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &4955678665518181515
 Animator:
-  serializedVersion: 5
+  serializedVersion: 7
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -797,6 +800,7 @@ Animator:
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
@@ -901,6 +905,11 @@ MonoBehaviour:
   RecoilImpulseSource: {fileID: 0}
   UseSway: 0
   ItemUseBehaviour: 1
+  WeaponHealthDamageData:
+    HeadShotMultiplier: 1
+    BodyShotMultiplier: 1
+    ArmShotMultiplier: 1
+    LegShotMultiplier: 1
   MagInOutAudioClip: {fileID: 0}
   ReloadAudioClip: {fileID: 0}
   Animator: {fileID: 4955678665518181515}
@@ -949,7 +958,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4947785844350150719}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: RightHandRing2ConstraintTarget
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1013,7 +1022,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2993542021588641100}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: LeftHandThumb1ConstraintTarget
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1045,7 +1054,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3125366148500190320}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: RightHandIKTarget
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1081,7 +1090,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2377735090502773332}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: RightHandThumb2ConstraintTarget
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1113,7 +1122,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7963236103450933922}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: RightHandPinky3ConstraintTarget
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1144,7 +1153,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3370326057307995629}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: RightHandIndex1ConstraintTarget
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1176,7 +1185,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2750150020441564522}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: LeftHandIndex1ConstraintTarget
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1208,7 +1217,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2817232681460042204}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: LeftHandMiddle1ConstraintTarget
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1240,7 +1249,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8176806039910022872}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: LeftHandRing3ConstraintTarget
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1271,7 +1280,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6753844632560863709}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: RightHandThumb1ConstraintTarget
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1303,7 +1312,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4309572812661881474}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: RightHandIndex3ConstraintTarget
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1334,7 +1343,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5566419565487915318}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: LeftHandPinky3ConstraintTarget
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1365,7 +1374,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7791438896739088866}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: LeftHandPinky2ConstraintTarget
   m_TagString: Untagged
   m_Icon: {fileID: 0}
